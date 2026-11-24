@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Blast — Математическая Арена</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        space: {
+                            900: '#090d16',
+                            800: '#0f172a',
+                            700: '#1e293b',
+                            card: 'rgba(30, 41, 59, 0.75)',
+                        },
+                        neon: {
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4',
+                            yellow: '#eab308',
+                            green: '#22c55e',
+                            red: '#ef4444'
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)' },
+                            '50%': { boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(4px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-6px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(6px, 0, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #090d16;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-text-purple {
+            text-shadow: 0 0 12px rgba(168, 85, 247, 0.7);
+        }
+        .glow-text-cyan {
+            text-shadow: 0 0 12px rgba(6, 182, 212, 0.7);
+        }
+        .glow-text-yellow {
+            text-shadow: 0 0 12px rgba(234, 179, 8, 0.7);
+        }
+
+        canvas {
+            display: block;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased text-white relative bg-gradient-to-br from-space-900 via-slate-900 to-indigo-950">
+
+    <!-- Top Fixed Navigation Bar -->
+    <header class="w-full px-4 py-3 border-b border-slate-800/80 bg-space-900/90 backdrop-blur-md flex items-center justify-between z-30 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <i class="fa-solid fa-bolt text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">MATH BLAST</h1>
+                <p class="text-xs text-slate-400 hidden sm:block">Математическая аркадная гонка</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="btn-sound" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-2 text-sm font-medium">
+                <i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i>
+                <span id="sound-text" class="hidden md:inline">Звук вкл</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col justify-center items-center relative z-10">
+
+        <!-- ================= SCREEN 1: START & DIFFICULTY SELECTION ================= -->
+        <section id="screen-start" class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/20 text-center animate-float my-auto">
+            <div class="inline-block p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 text-purple-300 mb-4 text-xs font-bold tracking-widest uppercase">
+                🚀 Готовность к математической арене
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-black mb-2 glow-text-purple">Поймай верный шар!</h2>
+            <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto mb-6">
+                Запомни решение примера за 4 секунды, а затем опереди 3 ботов-соперников и поймай шар с ответом!
+            </p>
+
+            <!-- Player Nickname -->
+            <div class="mb-6 max-w-sm mx-auto text-left">
+                <label for="input-player-name" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Имя игрока</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-purple-400"></i>
+                    <input type="text" id="input-player-name" value="Игрок" maxlength="12" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white font-bold focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all">
+                </div>
+            </div>
+
+            <!-- Difficulty Cards -->
+            <div class="mb-8">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 text-left max-w-sm mx-auto">Выберите уровень сложности</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    
+                    <!-- Easy Card -->
+                    <button type="button" data-diff="easy" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-slate-700 hover:border-emerald-400 hover:bg-emerald-950/30 transition-all cursor-pointer relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-extrabold text-emerald-400 text-base">ЛЁГКИЙ</span>
+                            <span class="bg-emerald-500/20 text-emerald-300 text-xs px-2 py-0.5 rounded-full font-bold">+1б</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-2">Сложение до 20</p>
+                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                            <i class="fa-solid fa-gauge-simple text-emerald-400"></i> Неспешные боты
+                        </div>
+                    </button>
+
+                    <!-- Medium Card (Default Selected) -->
+                    <button type="button" data-diff="medium" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-cyan-400 bg-cyan-950/40 transition-all cursor-pointer relative ring-2 ring-cyan-400/40">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-extrabold text-cyan-300 text-base">СРЕДНИЙ</span>
+                            <span class="bg-cyan-500/20 text-cyan-300 text-xs px-2 py-0.5 rounded-full font-bold">+2б</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-2">Сложение и вычитание до 20</p>
+                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                            <i class="fa-solid fa-gauge text-cyan-400"></i> Опытные боты
+                        </div>
+                    </button>
+
+                    <!-- Hard Card -->
+                    <button type="button" data-diff="hard" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-slate-700 hover:border-purple-400 hover:bg-purple-950/30 transition-all cursor-pointer relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-extrabold text-purple-400 text-base">СЛОЖНЫЙ</span>
+                            <span class="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded-full font-bold">+3б</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-2">Умножение до 10×10, +- до 50</p>
+                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                            <i class="fa-solid fa-bolt text-purple-400"></i> Быстрые боты
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Start Game Button -->
+            <button id="btn-start-game" class="w-full max-w-md py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-black text-xl tracking-wider shadow-lg shadow-purple-500/40 hover:shadow-purple-500/60 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto">
+                <i class="fa-solid fa-play"></i> НАЧАТЬ ИГРУ
+            </button>
+        </section>
+
+        <!-- ================= SCREEN 2: ACTIVE GAME ARENA ================= -->
+        <section id="screen-game" class="w-full flex-1 flex flex-col items-center justify-center hidden">
+            
+            <!-- Top HUD & Leaderboard Bar -->
+            <div class="w-full grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                
+                <!-- Match Info Box -->
+                <div class="md:col-span-3 glass-panel rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 border border-slate-700">
+                    
+                    <!-- Round Timer (30.0s) -->
+                    <div class="flex items-center gap-3 bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-clock text-amber-400 text-xl animate-pulse"></i>
+                        <div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Время раунда</div>
+                            <div id="hud-timer" class="text-2xl font-black text-amber-300 tracking-tight font-mono">30.0 с</div>
+                        </div>
+                    </div>
+
+                    <!-- Math Problem Banner -->
+                    <div class="flex-1 flex items-center justify-center bg-purple-950/40 border border-purple-500/30 rounded-xl px-4 py-2 min-w-[180px]">
+                        <span class="text-xs text-purple-300 uppercase font-bold mr-3">Пример:</span>
+                        <span id="hud-problem" class="text-2xl sm:text-3xl font-black tracking-widest text-cyan-300 font-mono">6 + 2 = ?</span>
+                    </div>
+
+                    <!-- Points Reward Tag -->
+                    <div class="bg-indigo-900/60 border border-indigo-500/30 px-3 py-2 rounded-xl text-center">
+                        <div class="text-[10px] text-indigo-300 font-bold uppercase">Награда</div>
+                        <div id="hud-points-per-ball" class="text-lg font-extrabold text-emerald-400">+2 б.</div>
+                    </div>
+                </div>
+
+                <!-- Mini Leaderboard -->
+                <div class="glass-panel rounded-2xl p-2.5 border border-slate-700 flex flex-col justify-center">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1 flex justify-between items-center">
+                        <span>Лидеры</span>
+                        <span id="hud-diff-badge" class="text-[10px] text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-md border border-cyan-500/30">СРЕДНИЙ</span>
+                    </div>
+                    <div id="hud-leaderboard-list" class="space-y-1">
+                        <!-- Inserted dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Arena Canvas Box -->
+            <div class="relative w-full aspect-[4/3] max-h-[520px] glass-panel rounded-3xl overflow-hidden border-2 border-purple-500/30 shadow-2xl flex items-center justify-center bg-space-900" id="canvas-container">
+                
+                <!-- Main Dynamic Canvas -->
+                <canvas id="game-canvas" class="w-full h-full cursor-crosshair"></canvas>
+
+                <!-- Toast Overlay -->
+                <div id="arena-toast" class="absolute top-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-slate-900/90 border border-purple-500/50 shadow-xl text-sm font-bold text-white flex items-center gap-2 transition-all opacity-0 pointer-events-none z-20 transform -translate-y-4">
+                    <span id="toast-icon">⚡</span>
+                    <span id="toast-text">Новый раунд!</span>
+                </div>
+
+                <!-- PHASE 1: PREVIEW OVERLAY (4 SECONDS) -->
+                <div id="overlay-preview" class="absolute inset-0 bg-space-900/95 backdrop-blur-md flex flex-col items-center justify-center p-6 z-30 transition-all duration-300">
+                    <div class="inline-block px-4 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-bold tracking-widest uppercase mb-4">
+                        🧠 Реши пример! (Таймер на паузе)
+                    </div>
+                    
+                    <!-- Large Math Problem Text -->
+                    <div id="preview-math-text" class="text-5xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-400 to-purple-400 tracking-wider mb-8 font-mono">
+                        6 + 2 = ?
+                    </div>
+
+                    <!-- 4-Second Countdown Progress Bar -->
+                    <div class="w-full max-w-md bg-slate-800 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700 mb-3 shadow-inner">
+                        <div id="preview-progress" class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 h-full rounded-full transition-all duration-100 ease-linear w-full"></div>
+                    </div>
+                    
+                    <div id="preview-countdown-num" class="text-xl font-bold text-slate-300 font-mono">
+                        Вылет шаров через: <span class="text-cyan-400 font-black">4.0с</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SCREEN 3: RESULTS / PODIUM ================= -->
+        <section id="screen-results" class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/30 text-center hidden my-auto animate-float">
+            
+            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 text-3xl shadow-lg shadow-amber-500/20">
+                🏆
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-black mb-1 glow-text-yellow">Раунд завершён!</h2>
+            <p id="results-subtitle" class="text-slate-300 text-sm mb-6">Отличная работа на арене!</p>
+
+            <!-- Leaderboard Podium List -->
+            <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 mb-6 space-y-2.5" id="results-podium-list">
+                <!-- Inserted dynamically -->
+            </div>
+
+            <!-- Player Match Stats Grid -->
+            <div class="grid grid-cols-3 gap-3 mb-8">
+                <div class="glass-card p-3 rounded-2xl border border-slate-700">
+                    <div class="text-[11px] text-slate-400 font-bold uppercase">Поймано шаров</div>
+                    <div id="stat-grabs" class="text-2xl font-black text-cyan-400">0</div>
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-slate-700">
+                    <div class="text-[11px] text-slate-400 font-bold uppercase">Точность</div>
+                    <div id="stat-accuracy" class="text-2xl font-black text-emerald-400">100%</div>
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-slate-700">
+                    <div class="text-[11px] text-slate-400 font-bold uppercase">Итого очков</div>
+                    <div id="stat-total-score" class="text-2xl font-black text-purple-400">0</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button id="btn-replay" class="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black tracking-wider shadow-lg shadow-purple-500/30 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> ИГРАТЬ ЕЩЁ РАЗ
+                </button>
+                <button id="btn-change-diff" class="py-3.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> СМЕНИТЬ СЛОЖНОСТЬ
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Confetti Canvas overlay -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- JavaScript Engine -->
+    <script>
+        /* ===================================================================
+           SOUND SYNTHESIZER (WEB AUDIO API)
+           =================================================================== */
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type, duration, gainVal = 0.1) {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            }
+
+            tick() { this.playTone(800, 'sine', 0.05, 0.05); }
+            whoosh() { this.playTone(350, 'sine', 0.1, 0.06); }
+            
+            handGrab() {
+                if (!this.enabled || !this.ctx) return;
+                this.playTone(880, 'sine', 0.08, 0.15);
+                setTimeout(() => this.playTone(1174.66, 'triangle', 0.12, 0.15), 50);
+            }
+
+            botGrab() {
+                if (!this.enabled || !this.ctx) return;
+                this.playTone(440, 'sawtooth', 0.1, 0.08);
+                setTimeout(() => this.playTone(330, 'sine', 0.1, 0.08), 60);
+            }
+
+            correct() {
+                if (!this.enabled || !this.ctx) return;
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    setTimeout(() => this.playTone(freq, 'triangle', 0.15, 0.12), idx * 60);
+                });
+            }
+
+            wrong() {
+                if (!this.enabled || !this.ctx) return;
+                this.playTone(180, 'sawtooth', 0.25, 0.15);
+                setTimeout(() => this.playTone(140, 'sawtooth', 0.3, 0.15), 100);
+            }
+
+            blast() { this.playTone(300, 'sine', 0.15, 0.08); }
+
+            fanfare() {
+                if (!this.enabled || !this.ctx) return;
+                [440, 554.37, 659.25, 880].forEach((freq, i) => {
+                    setTimeout(() => this.playTone(freq, 'triangle', 0.3, 0.15), i * 120);
+                });
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        /* ===================================================================
+           DIFFICULTY & GAME CONFIGURATION
+           =================================================================== */
+        const DIFFICULTY_CONFIG = {
+            easy: {
+                name: 'ЛЁГКИЙ',
+                points: 1,
+                botMinDelay: 3.2,
+                botMaxDelay: 5.5,
+                botErrorChance: 0.30
+            },
+            medium: {
+                name: 'СРЕДНИЙ',
+                points: 2,
+                botMinDelay: 2.0,
+                botMaxDelay: 3.8,
+                botErrorChance: 0.15
+            },
+            hard: {
+                name: 'СЛОЖНЫЙ',
+                points: 3,
+                botMinDelay: 1.2,
+                botMaxDelay: 2.5,
+                botErrorChance: 0.05
+            }
+        };
+
+        const BOTS_INFO = [
+            { id: 'bot1', name: 'Робо-Макс', color: '#06b6d4', icon: '🤖', score: 0, anchorRelX: 0.08, anchorRelY: 0.08 },
+            { id: 'bot2', name: 'Кибер-Аня', color: '#ec4899', icon: '👾', score: 0, anchorRelX: 0.92, anchorRelY: 0.08 },
+            { id: 'bot3', name: 'Нейро-Лев', color: '#eab308', icon: '🦊', score: 0, anchorRelX: 0.92, anchorRelY: 0.92 }
+        ];
+
+        let selectedDifficulty = 'medium';
+        let playerName = 'Игрок';
+
+        // Player Glove State
+        const playerHand = {
+            x: 0,
+            y: 0,
+            startX: 0,
+            startY: 0,
+            targetX: 0,
+            targetY: 0,
+            progress: 0,
+            state: 'IDLE', // 'IDLE', 'REACHING', 'RETRACTING', 'RECOILING'
+            ball: null,
+            isCorrect: false
+        };
+
+        // Match State
+        let matchActive = false;
+        let matchTimeRemaining = 30.0;
+        let currentPhase = 'NONE'; // 'PREVIEW' or 'BALLS'
+        let mainTimerInterval = null;
+        let previewTimerInterval = null;
+
+        let currentProblem = { text: '', answer: 0 };
+        let activeBalls = [];
+        let botCursors = [];
+        let particles = [];
+        let botDecisionTimers = [];
+
+        let playerStats = { score: 0, correctGrabs: 0, wrongGrabs: 0 };
+        let isClickLocked = false;
+
+        // Canvas References
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+
+        /* ===================================================================
+           ROBUST CANVAS RESIZING SYSTEM
+           =================================================================== */
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            const rect = container.getBoundingClientRect();
+            const width = Math.max(rect.width || container.clientWidth || 0, 400);
+            const height = Math.max(rect.height || container.clientHeight || 0, 300);
+
+            if (width > 0 && height > 0) {
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        // ResizeObserver for reliable dimension tracking
+        const containerElem = document.getElementById('canvas-container');
+        if (containerElem && window.ResizeObserver) {
+            const ro = new ResizeObserver(() => resizeCanvas());
+            ro.observe(containerElem);
+        }
+
+        /* ===================================================================
+           INITIALIZATION & DOM EVENTS
+           =================================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Sound Toggle Button
+            document.getElementById('btn-sound').addEventListener('click', () => {
+                soundEngine.enabled = !soundEngine.enabled;
+                soundEngine.init();
+                const icon = document.getElementById('sound-icon');
+                const text = document.getElementById('sound-text');
+                if (soundEngine.enabled) {
+                    icon.className = 'fa-solid fa-volume-high text-cyan-400';
+                    text.textContent = 'Звук вкл';
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                    text.textContent = 'Выкл';
+                }
+            });
+
+            // Difficulty Cards Selection
+            document.querySelectorAll('.btn-diff').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedDifficulty = btn.getAttribute('data-diff');
+                    
+                    document.querySelectorAll('.btn-diff').forEach(b => {
+                        b.classList.remove('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
+                        b.classList.add('border-slate-700');
+                    });
+                    
+                    btn.classList.remove('border-slate-700');
+                    btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
+                    soundEngine.tick();
+                });
+            });
+
+            // Start Game Button
+            document.getElementById('btn-start-game').addEventListener('click', () => {
+                soundEngine.init();
+                soundEngine.tick();
+                const nameInput = document.getElementById('input-player-name').value.trim();
+                if (nameInput) playerName = nameInput.substring(0, 12);
+                startMatch();
+            });
+
+            // Replay & Difficulty Buttons
+            document.getElementById('btn-replay').addEventListener('click', () => {
+                soundEngine.tick();
+                startMatch();
+            });
+
+            document.getElementById('btn-change-diff').addEventListener('click', () => {
+                soundEngine.tick();
+                showScreen('screen-start');
+            });
+
+            // Canvas Click / Tap
+            canvas.addEventListener('pointerdown', handleCanvasClick);
+
+            // Start Animation Loop
+            requestAnimationFrame(gameLoop);
+        });
+
+        function showScreen(screenId) {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        /* ===================================================================
+           MATH PROBLEM & ANSWERS GENERATOR
+           =================================================================== */
+        function generateMathProblem(difficulty) {
+            let a, b, text, answer;
+
+            if (difficulty === 'easy') {
+                answer = Math.floor(Math.random() * 18) + 3; // 3..20
+                a = Math.floor(Math.random() * (answer - 1)) + 1;
+                b = answer - a;
+                text = `${a} + ${b} = ?`;
+            } else if (difficulty === 'medium') {
+                const isAdd = Math.random() > 0.5;
+                if (isAdd) {
+                    answer = Math.floor(Math.random() * 16) + 4;
+                    a = Math.floor(Math.random() * (answer - 1)) + 1;
+                    b = answer - a;
+                    text = `${a} + ${b} = ?`;
+                } else {
+                    a = Math.floor(Math.random() * 14) + 6;
+                    b = Math.floor(Math.random() * (a - 1)) + 1;
+                    answer = a - b;
+                    text = `${a} - ${b} = ?`;
+                }
+            } else {
+                const randType = Math.random();
+                if (randType < 0.6) {
+                    a = Math.floor(Math.random() * 9) + 2;
+                    b = Math.floor(Math.random() * 9) + 2;
+                    answer = a * b;
+                    text = `${a} × ${b} = ?`;
+                } else if (randType < 0.8) {
+                    answer = Math.floor(Math.random() * 40) + 10;
+                    a = Math.floor(Math.random() * (answer - 5)) + 3;
+                    b = answer - a;
+                    text = `${a} + ${b} = ?`;
+                } else {
+                    a = Math.floor(Math.random() * 35) + 15;
+                    b = Math.floor(Math.random() * (a - 5)) + 3;
+                    answer = a - b;
+                    text = `${a} - ${b} = ?`;
+                }
+            }
+
+            return { text, answer };
+        }
+
+        function generate7Answers(correctAnswer) {
+            const set = new Set([correctAnswer]);
+            while (set.size < 7) {
+                const offset = (Math.floor(Math.random() * 7) + 1) * (Math.random() > 0.5 ? 1 : -1);
+                let fake = correctAnswer + offset;
+                if (fake <= 0) fake = correctAnswer + Math.abs(offset) + 2;
+                set.add(fake);
+            }
+            const arr = Array.from(set);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        /* ===================================================================
+           MATCH FLOW & TIMERS
+           =================================================================== */
+        function startMatch() {
+            showScreen('screen-game');
+            
+            // Ensure Canvas is sized properly right after screen transition
+            requestAnimationFrame(() => resizeCanvas());
+
+            playerStats = { score: 0, correctGrabs: 0, wrongGrabs: 0 };
+            BOTS_INFO.forEach(bot => bot.score = 0);
+            matchTimeRemaining = 30.0;
+            matchActive = true;
+
+            document.getElementById('hud-diff-badge').textContent = DIFFICULTY_CONFIG[selectedDifficulty].name;
+            document.getElementById('hud-points-per-ball').textContent = `+${DIFFICULTY_CONFIG[selectedDifficulty].points} б.`;
+
+            updateScoreboardHUD();
+
+            // Initialize bot cursor/claw positions
+            botCursors = BOTS_INFO.map(bot => ({
+                id: bot.id,
+                name: bot.name,
+                color: bot.color,
+                icon: bot.icon,
+                relX: bot.anchorRelX,
+                relY: bot.anchorRelY,
+                x: canvas.width * bot.anchorRelX,
+                y: canvas.height * bot.anchorRelY,
+                targetX: canvas.width * bot.anchorRelX,
+                targetY: canvas.height * bot.anchorRelY,
+                grabState: 'IDLE'
+            }));
+
+            // Main 30-Second Round Timer
+            clearInterval(mainTimerInterval);
+            mainTimerInterval = setInterval(() => {
+                if (currentPhase === 'BALLS' && matchActive) {
+                    matchTimeRemaining -= 0.1;
+                    if (matchTimeRemaining <= 0) {
+                        matchTimeRemaining = 0;
+                        endMatch();
+                    }
+                    document.getElementById('hud-timer').textContent = `${matchTimeRemaining.toFixed(1)} с`;
+                }
+            }, 100);
+
+            startQuestionCycle();
+        }
+
+        function startQuestionCycle() {
+            if (matchTimeRemaining <= 0 || !matchActive) return;
+
+            botDecisionTimers.forEach(t => clearTimeout(t));
+            botDecisionTimers = [];
+
+            currentProblem = generateMathProblem(selectedDifficulty);
+            document.getElementById('hud-problem').textContent = currentProblem.text;
+
+            // Phase 1: PREVIEW (4 seconds)
+            currentPhase = 'PREVIEW';
+            activeBalls = [];
+
+            const previewOverlay = document.getElementById('overlay-preview');
+            const previewText = document.getElementById('preview-math-text');
+            const progress = document.getElementById('preview-progress');
+            const countdownNum = document.getElementById('preview-countdown-num');
+
+            previewText.textContent = currentProblem.text;
+            progress.style.width = '100%';
+            previewOverlay.classList.remove('hidden', 'opacity-0');
+            previewOverlay.classList.add('opacity-100');
+
+            clearInterval(previewTimerInterval);
+            const previewStartTime = Date.now();
+            const previewDurationMs = 4000;
+
+            previewTimerInterval = setInterval(() => {
+                const elapsed = Date.now() - previewStartTime;
+                const remaining = Math.max(0, (previewDurationMs - elapsed) / 1000);
+                
+                countdownNum.querySelector('span').textContent = `${remaining.toFixed(1)}с`;
+                progress.style.width = `${(remaining / 4.0) * 100}%`;
+
+                if (remaining <= 0) {
+                    clearInterval(previewTimerInterval);
+                    previewOverlay.classList.add('opacity-0');
+                    setTimeout(() => previewOverlay.classList.add('hidden'), 300);
+                    spawnBallsPhase();
+                }
+            }, 50);
+
+            soundEngine.blast();
+        }
+
+        function spawnBallsPhase() {
+            currentPhase = 'BALLS';
+            showToast('⚡ Вылет шаров! Ищи верный ответ!', 'purple');
+
+            const answersArray = generate7Answers(currentProblem.answer);
+            const ballRadius = Math.max(20, Math.min(canvas.width, canvas.height) * 0.06);
+
+            const colors = ['#06b6d4', '#a855f7', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+
+            activeBalls = answersArray.map((num, idx) => {
+                const angle = Math.random() * Math.PI * 2;
+                // Moderate speed (~1.2 - 2.2 px/frame)
+                const speed = 1.2 + Math.random() * 1.0;
+                return {
+                    id: idx,
+                    value: num,
+                    isCorrect: (num === currentProblem.answer),
+                    x: Math.random() * (canvas.width - ballRadius * 4) + ballRadius * 2,
+                    y: Math.random() * (canvas.height - ballRadius * 4) + ballRadius * 2,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: ballRadius,
+                    color: colors[idx % colors.length],
+                    isWrongFlash: false,
+                    flashTimer: 0
+                };
+            });
+
+            scheduleBotBehaviors();
+        }
+
+        /* ===================================================================
+           BOT AI LOGIC
+           =================================================================== */
+        function scheduleBotBehaviors() {
+            const config = DIFFICULTY_CONFIG[selectedDifficulty];
+            const correctBall = activeBalls.find(b => b.isCorrect);
+            if (!correctBall) return;
+
+            BOTS_INFO.forEach((bot, idx) => {
+                const delaySeconds = config.botMinDelay + Math.random() * (config.botMaxDelay - config.botMinDelay);
+                const isError = Math.random() < config.botErrorChance;
+                const botCursor = botCursors[idx];
+
+                const wrongBalls = activeBalls.filter(b => !b.isCorrect);
+                const targetBall = isError 
+                    ? (wrongBalls[Math.floor(Math.random() * wrongBalls.length)] || correctBall)
+                    : correctBall;
+
+                if (botCursor && targetBall) {
+                    botCursor.targetX = targetBall.x;
+                    botCursor.targetY = targetBall.y;
+                }
+
+                const timerId = setTimeout(() => {
+                    if (currentPhase !== 'BALLS' || !matchActive || playerHand.state !== 'IDLE') return;
+
+                    if (isError && targetBall) {
+                        targetBall.isWrongFlash = true;
+                        targetBall.flashTimer = 20;
+                        createParticles(targetBall.x, targetBall.y, '#ef4444', 10);
+                        soundEngine.wrong();
+                    } else if (correctBall && activeBalls.includes(correctBall)) {
+                        botCursor.grabState = 'REACHING';
+                        soundEngine.whoosh();
+
+                        setTimeout(() => {
+                            if (currentPhase !== 'BALLS') return;
+                            bot.score += config.points;
+                            soundEngine.botGrab();
+                            showToast(`${bot.icon} ${bot.name} поймал шар! (+${config.points})`, 'pink');
+                            createParticles(botCursor.x, botCursor.y, bot.color, 25);
+                            updateScoreboardHUD();
+                            startQuestionCycle();
+                        }, 400);
+                    }
+                }, delaySeconds * 1000);
+
+                botDecisionTimers.push(timerId);
+            });
+        }
+
+        /* ===================================================================
+           PLAYER INTERACTION & GLOVE ANIMATION
+           =================================================================== */
+        function handleCanvasClick(e) {
+            if (currentPhase !== 'BALLS' || isClickLocked || playerHand.state !== 'IDLE') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            for (let i = 0; i < activeBalls.length; i++) {
+                const ball = activeBalls[i];
+                const dist = Math.hypot(clickX - ball.x, clickY - ball.y);
+
+                if (dist <= ball.radius + 14) {
+                    playerHand.startX = canvas.width / 2;
+                    playerHand.startY = canvas.height + 40;
+                    playerHand.targetX = ball.x;
+                    playerHand.targetY = ball.y;
+                    playerHand.progress = 0;
+                    playerHand.state = 'REACHING';
+                    playerHand.ball = ball;
+                    playerHand.isCorrect = ball.isCorrect;
+                    soundEngine.whoosh();
+
+                    if (!ball.isCorrect) {
+                        playerStats.wrongGrabs++;
+                        ball.isWrongFlash = true;
+                        ball.flashTimer = 25;
+                        
+                        const container = document.getElementById('canvas-container');
+                        container.classList.add('animate-shake');
+                        setTimeout(() => container.classList.remove('animate-shake'), 400);
+
+                        isClickLocked = true;
+                        setTimeout(() => { isClickLocked = false; }, 500);
+                        showToast(`❌ Ошибка! (0.5с блок)`, 'red');
+                    }
+                    break;
+                }
+            }
+        }
+
+        /* ===================================================================
+           MAIN RENDER LOOP & CANVAS DRAWING
+           =================================================================== */
+        function gameLoop() {
+            try {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                drawCosmicGrid();
+
+                if (currentPhase === 'BALLS') {
+                    updateAndDrawBalls();
+                    updateAndDrawBotCursors();
+                    updateAndDrawPlayerHand();
+                }
+
+                updateAndDrawParticles();
+                updateAndDrawConfetti();
+            } catch(err) {
+                console.error("Render loop error:", err);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function drawCosmicGrid() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.save();
+            ctx.fillStyle = '#090d16';
+            ctx.fillRect(0, 0, w, h);
+
+            // Subtle Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.lineWidth = 1;
+            const step = 40;
+            for (let x = 0; x < w; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function updateAndDrawBalls() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            for (let i = 0; i < activeBalls.length; i++) {
+                const ball = activeBalls[i];
+
+                // Bounce & physics if not currently being pulled down by glove
+                if (playerHand.state !== 'RETRACTING' || playerHand.ball !== ball) {
+                    ball.x += ball.vx;
+                    ball.y += ball.vy;
+
+                    if (ball.x - ball.radius < 0) {
+                        ball.x = ball.radius;
+                        ball.vx *= -1;
+                    } else if (ball.x + ball.radius > w) {
+                        ball.x = w - ball.radius;
+                        ball.vx *= -1;
+                    }
+                    if (ball.y - ball.radius < 0) {
+                        ball.y = ball.radius;
+                        ball.vy *= -1;
+                    } else if (ball.y + ball.radius > h) {
+                        ball.y = h - ball.radius;
+                        ball.vy *= -1;
+                    }
+                }
+
+                if (ball.isWrongFlash) {
+                    ball.flashTimer--;
+                    if (ball.flashTimer <= 0) ball.isWrongFlash = false;
+                }
+
+                // Render Ball
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+
+                // Neon Glow
+                ctx.shadowColor = ball.isWrongFlash ? '#ef4444' : ball.color;
+                ctx.shadowBlur = ball.isWrongFlash ? 25 : 15;
+
+                // Radial Gradient Fill
+                const grad = ctx.createRadialGradient(
+                    ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.1,
+                    ball.x, ball.y, ball.radius
+                );
+
+                if (ball.isWrongFlash) {
+                    grad.addColorStop(0, '#fca5a5');
+                    grad.addColorStop(1, '#dc2626');
+                } else {
+                    grad.addColorStop(0, '#ffffff');
+                    grad.addColorStop(0.35, ball.color);
+                    grad.addColorStop(1, '#0f172a');
+                }
+
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = ball.isWrongFlash ? '#ef4444' : '#ffffff';
+                ctx.stroke();
+
+                // Ball Text Number
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.round(ball.radius * 0.9)}px Inter, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(ball.value, ball.x, ball.y);
+
+                ctx.restore();
+            }
+        }
+
+        function updateAndDrawPlayerHand() {
+            if (playerHand.state === 'IDLE') return;
+
+            if (playerHand.state === 'REACHING') {
+                playerHand.progress += 0.14;
+                if (playerHand.progress >= 1) {
+                    playerHand.progress = 1;
+                    if (playerHand.isCorrect) {
+                        playerHand.state = 'RETRACTING';
+                        playerHand.progress = 0;
+                        soundEngine.handGrab();
+                        soundEngine.correct();
+                        createParticles(playerHand.targetX, playerHand.targetY, '#22c55e', 25);
+                    } else {
+                        playerHand.state = 'RECOILING';
+                        playerHand.progress = 0;
+                        soundEngine.wrong();
+                        createParticles(playerHand.targetX, playerHand.targetY, '#ef4444', 15);
+                    }
+                }
+            } else if (playerHand.state === 'RETRACTING') {
+                playerHand.progress += 0.08;
+                if (playerHand.ball) {
+                    playerHand.ball.x = playerHand.targetX + (playerHand.startX - playerHand.targetX) * playerHand.progress;
+                    playerHand.ball.y = playerHand.targetY + (playerHand.startY - playerHand.targetY) * playerHand.progress;
+                }
+                if (playerHand.progress >= 1) {
+                    playerHand.state = 'IDLE';
+                    const config = DIFFICULTY_CONFIG[selectedDifficulty];
+                    playerStats.score += config.points;
+                    playerStats.correctGrabs++;
+                    showToast(`🚀 СХВАЧЕНО! (+${config.points})`, 'green');
+                    updateScoreboardHUD();
+                    startQuestionCycle();
+                    return;
+                }
+            } else if (playerHand.state === 'RECOILING') {
+                playerHand.progress += 0.15;
+                if (playerHand.progress >= 1) playerHand.state = 'IDLE';
+            }
+
+            let currX, currY;
+            if (playerHand.state === 'REACHING') {
+                currX = playerHand.startX + (playerHand.targetX - playerHand.startX) * playerHand.progress;
+                currY = playerHand.startY + (playerHand.targetY - playerHand.startY) * playerHand.progress;
+            } else {
+                currX = playerHand.targetX + (playerHand.startX - playerHand.targetX) * playerHand.progress;
+                currY = playerHand.targetY + (playerHand.startY - playerHand.targetY) * playerHand.progress;
+            }
+
+            ctx.save();
+            
+            // Arm Beam
+            ctx.beginPath();
+            ctx.moveTo(playerHand.startX, playerHand.startY);
+            ctx.lineTo(currX, currY);
+            ctx.strokeStyle = playerHand.isCorrect ? 'rgba(168, 85, 247, 0.7)' : 'rgba(239, 68, 68, 0.7)';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.shadowColor = playerHand.isCorrect ? '#a855f7' : '#ef4444';
+            ctx.shadowBlur = 15;
+            ctx.stroke();
+
+            // Palm Base
+            ctx.beginPath();
+            ctx.arc(currX, currY, 16, 0, Math.PI * 2);
+            ctx.fillStyle = playerHand.isCorrect ? '#a855f7' : '#ef4444';
+            ctx.fill();
+
+            // Fingers/Glove
+            const isGrabbing = playerHand.state === 'RETRACTING' || (playerHand.state === 'REACHING' && playerHand.progress > 0.7);
+            const fingerAngles = [-0.6, -0.3, 0, 0.3, 0.6];
+            const fingerLen = isGrabbing ? 14 : 22;
+
+            fingerAngles.forEach((angOffset) => {
+                const baseAng = Math.atan2(playerHand.targetY - playerHand.startY, playerHand.targetX - playerHand.startX) - Math.PI / 2;
+                const finalAng = baseAng + angOffset + (isGrabbing ? (angOffset > 0 ? -0.4 : 0.4) : 0);
+                
+                const fx = currX + Math.cos(finalAng) * fingerLen;
+                const fy = currY + Math.sin(finalAng) * fingerLen;
+
+                ctx.beginPath();
+                ctx.moveTo(currX, currY);
+                ctx.lineTo(fx, fy);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            });
+
+            ctx.restore();
+        }
+
+        function updateAndDrawBotCursors() {
+            botCursors.forEach((botC) => {
+                const anchorX = canvas.width * botC.relX;
+                const anchorY = canvas.height * botC.relY;
+
+                botC.x += (botC.targetX - botC.x) * 0.05;
+                botC.y += (botC.targetY - botC.y) * 0.05;
+
+                ctx.save();
+
+                // Mechanical Arm
+                ctx.beginPath();
+                ctx.moveTo(anchorX, anchorY);
+                ctx.lineTo(botC.x, botC.y);
+                ctx.strokeStyle = botC.color + '77';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+
+                // Claw Pincers
+                const isGrabbing = botC.grabState === 'REACHING';
+                const pincerAngle = isGrabbing ? 0.2 : 0.55;
+
+                ctx.beginPath();
+                ctx.arc(botC.x - 6, botC.y, 13, -pincerAngle, pincerAngle);
+                ctx.strokeStyle = botC.color;
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = botC.color;
+                ctx.shadowBlur = 8;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(botC.x + 6, botC.y, 13, Math.PI - pincerAngle, Math.PI + pincerAngle);
+                ctx.strokeStyle = botC.color;
+                ctx.lineWidth = 3.5;
+                ctx.stroke();
+
+                // Bot Icon Badge
+                ctx.beginPath();
+                ctx.arc(botC.x, botC.y, 12, 0, Math.PI * 2);
+                ctx.fillStyle = botC.color;
+                ctx.fill();
+
+                ctx.font = '11px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(botC.icon, botC.x, botC.y);
+
+                ctx.restore();
+            });
+        }
+
+        /* ===================================================================
+           PARTICLES & CONFETTI ENGINE
+           =================================================================== */
+        function createParticles(x, y, color, count = 20) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                particles.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: color,
+                    radius: Math.random() * 4 + 2,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        function updateAndDrawParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        let confettiParticles = [];
+        function triggerConfetti() {
+            confettiParticles = [];
+            const colors = ['#06b6d4', '#a855f7', '#ec4899', '#eab308', '#22c55e'];
+            for (let i = 0; i < 90; i++) {
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: -20,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 5 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 5,
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 6
+                });
+            }
+        }
+
+        function updateAndDrawConfetti() {
+            if (confettiParticles.length === 0) return;
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (let i = confettiParticles.length - 1; i >= 0; i--) {
+                const c = confettiParticles[i];
+                c.x += c.vx;
+                c.y += c.vy;
+                c.rotation += c.rSpeed;
+
+                if (c.y > confettiCanvas.height + 20) {
+                    confettiParticles.splice(i, 1);
+                    continue;
+                }
+
+                confettiCtx.save();
+                confettiCtx.translate(c.x, c.y);
+                confettiCtx.rotate((c.rotation * Math.PI) / 180);
+                confettiCtx.fillStyle = c.color;
+                confettiCtx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+                confettiCtx.restore();
+            }
+        }
+
+        /* ===================================================================
+           UI UPDATES & TOASTS
+           =================================================================== */
+        function updateScoreboardHUD() {
+            const leaderboardList = document.getElementById('hud-leaderboard-list');
+            
+            const allPlayers = [
+                { name: playerName, score: playerStats.score, isHuman: true, icon: '👤' },
+                ...BOTS_INFO.map(b => ({ name: b.name, score: b.score, isHuman: false, icon: b.icon }))
+            ].sort((a, b) => b.score - a.score);
+
+            leaderboardList.innerHTML = allPlayers.map((p, rank) => `
+                <div class="flex items-center justify-between px-2 py-0.5 rounded-lg ${p.isHuman ? 'bg-purple-900/50 border border-purple-500/40' : 'bg-slate-800/40'}">
+                    <div class="flex items-center gap-1.5 text-xs font-bold overflow-hidden">
+                        <span class="text-[10px] text-slate-400 font-mono w-3">${rank + 1}.</span>
+                        <span>${p.icon}</span>
+                        <span class="${p.isHuman ? 'text-purple-300 font-black' : 'text-slate-300'} truncate max-w-[85px]">${p.name}</span>
+                    </div>
+                    <span class="text-xs font-black font-mono text-cyan-300">${p.score}</span>
+                </div>
+            `).join('');
+        }
+
+        function showToast(text, colorType) {
+            const toast = document.getElementById('arena-toast');
+            const toastText = document.getElementById('toast-text');
+            
+            toastText.textContent = text;
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toast.timer);
+            toast.timer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-4');
+            }, 1800);
+        }
+
+        /* ===================================================================
+           END OF MATCH & PODIUM SCREEN
+           =================================================================== */
+        function endMatch() {
+            matchActive = false;
+            currentPhase = 'NONE';
+            clearInterval(mainTimerInterval);
+            clearInterval(previewTimerInterval);
+            botDecisionTimers.forEach(t => clearTimeout(t));
+
+            const standings = [
+                { name: playerName, score: playerStats.score, isHuman: true, icon: '👤' },
+                ...BOTS_INFO.map(b => ({ name: b.name, score: b.score, isHuman: false, icon: b.icon }))
+            ].sort((a, b) => b.score - a.score);
+
+            const humanRank = standings.findIndex(p => p.isHuman) + 1;
+
+            const podiumList = document.getElementById('results-podium-list');
+            const medalEmojis = ['🥇', '🥈', '🥉', '4️⃣'];
+
+            podiumList.innerHTML = standings.map((p, idx) => `
+                <div class="flex items-center justify-between p-3 rounded-xl ${p.isHuman ? 'bg-gradient-to-r from-purple-900/60 to-indigo-900/60 border border-purple-400/50 shadow-md' : 'bg-slate-800/50'}">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">${medalEmojis[idx]}</span>
+                        <span class="text-lg">${p.icon}</span>
+                        <span class="font-extrabold text-sm sm:text-base ${p.isHuman ? 'text-purple-300' : 'text-slate-200'}">${p.name} ${p.isHuman ? '(ВЫ)' : ''}</span>
+                    </div>
+                    <span class="text-xl font-black font-mono text-cyan-300">${p.score} б.</span>
+                </div>
+            `).join('');
+
+            document.getElementById('stat-grabs').textContent = playerStats.correctGrabs;
+            
+            const totalAttempts = playerStats.correctGrabs + playerStats.wrongGrabs;
+            const accuracy = totalAttempts > 0 ? Math.round((playerStats.correctGrabs / totalAttempts) * 100) : 100;
+            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('stat-total-score').textContent = playerStats.score;
+
+            const subtitle = document.getElementById('results-subtitle');
+            if (humanRank === 1) {
+                subtitle.textContent = '🎉 Невероятно! Ты занял 1-е место на математической арене!';
+                triggerConfetti();
+                soundEngine.fanfare();
+            } else {
+                subtitle.textContent = `Ты занял ${humanRank}-е место. Попробуй ещё раз, чтобы занять 1 место!`;
+                soundEngine.tick();
+            }
+
+            showScreen('screen-results');
+        }
+    </script>
+</body>
+</html>
