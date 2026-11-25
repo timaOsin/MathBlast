@@ -36,23 +36,24 @@
                     },
                     animation: {
                         'pulse-glow': 'pulseGlow 2s infinite',
-                        'float': 'float 3s ease-in-out infinite',
                         'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+                        'problem-swap': 'problemSwap 0.42s cubic-bezier(0.22, 1, 0.36, 1) both',
                     },
                     keyframes: {
                         pulseGlow: {
                             '0%, 100%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)' },
                             '50%': { boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' },
                         },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-6px)' },
-                        },
                         shake: {
                             '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
                             '20%, 80%': { transform: 'translate3d(4px, 0, 0)' },
                             '30%, 50%, 70%': { transform: 'translate3d(-6px, 0, 0)' },
                             '40%, 60%': { transform: 'translate3d(6px, 0, 0)' }
+                        },
+                        problemSwap: {
+                            '0%': { opacity: '0', transform: 'translateY(-14px) scale(0.75)', filter: 'brightness(2)' },
+                            '55%': { opacity: '1', transform: 'translateY(3px) scale(1.12)', filter: 'brightness(1.4)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)', filter: 'brightness(1)' }
                         }
                     }
                 }
@@ -98,22 +99,26 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans antialiased text-white relative bg-gradient-to-br from-space-900 via-slate-900 to-indigo-950">
+<body id="app-body" class="min-h-[100dvh] flex flex-col font-sans antialiased text-white relative bg-gradient-to-br from-space-900 via-slate-900 to-indigo-950">
 
     <!-- Top Fixed Navigation Bar -->
-    <header class="w-full px-4 py-3 border-b border-slate-800/80 bg-space-900/90 backdrop-blur-md flex items-center justify-between z-30 shadow-md">
+    <header class="w-full shrink-0 px-3 sm:px-4 py-2.5 border-b border-slate-800/80 bg-space-900/90 backdrop-blur-md flex items-center justify-between z-30 shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
                 <i class="fa-solid fa-bolt text-xl text-white"></i>
             </div>
             <div>
                 <h1 class="font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">MATH BLAST</h1>
-                <p class="text-xs text-slate-400 hidden sm:block">Математическая аркадная гонка</p>
+                <p class="text-xs text-slate-400 hidden sm:block">Математическая аркадная арена</p>
             </div>
         </div>
 
         <div class="flex items-center gap-2">
-            <button id="btn-sound" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-2 text-sm font-medium">
+            <button id="btn-exit-menu" type="button" class="hidden p-2.5 px-3.5 rounded-xl bg-rose-950/70 hover:bg-rose-900/90 border border-rose-500/40 text-rose-200 hover:text-white transition-all flex items-center gap-2 text-sm font-bold shadow-sm active:scale-95" title="Выйти в главное меню">
+                <i id="exit-menu-icon" class="fa-solid fa-house text-rose-400"></i>
+                <span id="exit-menu-text">В меню</span>
+            </button>
+            <button id="btn-sound" type="button" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-2 text-sm font-medium active:scale-95">
                 <i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i>
                 <span id="sound-text" class="hidden md:inline">Звук вкл</span>
             </button>
@@ -121,166 +126,190 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col justify-center items-center relative z-10">
+    <main id="main-container" class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col justify-center items-center relative z-10">
 
         <!-- ================= SCREEN 1: START & DIFFICULTY SELECTION ================= -->
-        <section id="screen-start" class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/20 text-center animate-float my-auto">
-            <div class="inline-block p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 text-purple-300 mb-4 text-xs font-bold tracking-widest uppercase">
-                🚀 Готовность к математической арене
+        <section id="screen-start" class="w-full max-w-xl glass-panel rounded-3xl p-5 sm:p-7 shadow-2xl border border-purple-500/20 text-center my-auto">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 mb-3 text-[11px] font-bold tracking-widest uppercase">
+                <span>🔥</span>
+                <span>Математическая аркадная арена</span>
             </div>
-            <h2 class="text-3xl sm:text-4xl font-black mb-2 glow-text-purple">Поймай верный шар!</h2>
-            <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto mb-6">
-                Запомни решение примера за 4 секунды, а затем опереди 3 ботов-соперников и поймай шар с ответом!
-            </p>
+            <h2 class="text-2xl sm:text-4xl font-black mb-4 glow-text-purple">Поймай верный шар!</h2>
 
-            <!-- Player Nickname -->
-            <div class="mb-6 max-w-sm mx-auto text-left">
-                <label for="input-player-name" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Имя игрока</label>
-                <div class="relative">
-                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-purple-400"></i>
-                    <input type="text" id="input-player-name" value="Игрок" maxlength="12" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white font-bold focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all">
+            <!-- Mode Tabs (Survival vs Nightmare vs Training) -->
+            <div class="max-w-md mx-auto mb-4 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-700/80 grid grid-cols-3 gap-1.5">
+                <button id="tab-survival" type="button" data-mode="survival" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 text-white shadow-md border border-purple-400/40">
+                    <span>🔥</span>
+                    <span>Выживание</span>
+                </button>
+                <button id="tab-nightmare" type="button" data-mode="nightmare" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent">
+                    <span>💀</span>
+                    <span>Кошмар</span>
+                </button>
+                <button id="tab-training" type="button" data-mode="training" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent">
+                    <span>🎯</span>
+                    <span>Тренировка</span>
+                </button>
+            </div>
+
+            <!-- Compact Rule Chips -->
+            <div id="mode-chips" class="max-w-md mx-auto mb-5 flex flex-wrap items-center justify-center gap-2 text-xs font-bold">
+                <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-clock"></i> 15 сек старт
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-robot"></i> 3 соперника
+                </span>
+            </div>
+
+            <!-- Math Operation Selector (Addition / Subtraction / Multiplication / Division) -->
+            <div class="mb-4">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Выберите действие</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-md mx-auto">
+                    <button type="button" data-op="add" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-cyan-400 bg-cyan-950/40 ring-2 ring-cyan-400/40 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
+                        <span class="text-base font-black text-cyan-300">➕</span>
+                        <span class="text-xs font-extrabold text-white">Сложение</span>
+                    </button>
+                    <button type="button" data-op="sub" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-pink-400 hover:bg-pink-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
+                        <span class="text-base font-black text-pink-400">➖</span>
+                        <span class="text-xs font-extrabold text-slate-200">Вычитание</span>
+                    </button>
+                    <button type="button" data-op="mul" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-purple-400 hover:bg-purple-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
+                        <span class="text-base font-black text-purple-400">✖️</span>
+                        <span class="text-xs font-extrabold text-slate-200">Умножение</span>
+                    </button>
+                    <button type="button" data-op="div" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-amber-400 hover:bg-amber-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
+                        <span class="text-base font-black text-amber-400">➗</span>
+                        <span class="text-xs font-extrabold text-slate-200">Деление</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Difficulty Cards -->
-            <div class="mb-8">
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 text-left max-w-sm mx-auto">Выберите уровень сложности</label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div id="difficulty-section" class="mb-6">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Выберите уровень сложности</label>
+                <div class="grid grid-cols-3 gap-2.5 max-w-md mx-auto">
                     
                     <!-- Easy Card -->
-                    <button type="button" data-diff="easy" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-slate-700 hover:border-emerald-400 hover:bg-emerald-950/30 transition-all cursor-pointer relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-extrabold text-emerald-400 text-base">ЛЁГКИЙ</span>
-                            <span class="bg-emerald-500/20 text-emerald-300 text-xs px-2 py-0.5 rounded-full font-bold">+1б</span>
+                    <button type="button" data-diff="easy" class="btn-diff glass-card rounded-2xl p-3 text-left border-2 border-slate-700 hover:border-emerald-400 hover:bg-emerald-950/30 transition-all cursor-pointer relative active:scale-95">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                            <span class="font-extrabold text-emerald-400 text-xs sm:text-sm">ЛЁГКИЙ</span>
+                            <span id="badge-diff-easy" class="self-start bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
                         </div>
-                        <p class="text-xs text-slate-300 mb-2">Сложение до 20</p>
-                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-gauge-simple text-emerald-400"></i> Неспешные боты
-                        </div>
+                        <p id="desc-diff-easy" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 20</p>
                     </button>
 
                     <!-- Medium Card (Default Selected) -->
-                    <button type="button" data-diff="medium" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-cyan-400 bg-cyan-950/40 transition-all cursor-pointer relative ring-2 ring-cyan-400/40">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-extrabold text-cyan-300 text-base">СРЕДНИЙ</span>
-                            <span class="bg-cyan-500/20 text-cyan-300 text-xs px-2 py-0.5 rounded-full font-bold">+2б</span>
+                    <button type="button" data-diff="medium" class="btn-diff glass-card rounded-2xl p-3 text-left border-2 border-cyan-400 bg-cyan-950/40 transition-all cursor-pointer relative ring-2 ring-cyan-400/40 active:scale-95">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                            <span class="font-extrabold text-cyan-300 text-xs sm:text-sm">СРЕДНИЙ</span>
+                            <span id="badge-diff-medium" class="self-start bg-cyan-500/20 text-cyan-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
                         </div>
-                        <p class="text-xs text-slate-300 mb-2">Сложение и вычитание до 20</p>
-                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-gauge text-cyan-400"></i> Опытные боты
-                        </div>
+                        <p id="desc-diff-medium" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 50</p>
                     </button>
 
                     <!-- Hard Card -->
-                    <button type="button" data-diff="hard" class="btn-diff glass-card rounded-2xl p-4 text-left border-2 border-slate-700 hover:border-purple-400 hover:bg-purple-950/30 transition-all cursor-pointer relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-extrabold text-purple-400 text-base">СЛОЖНЫЙ</span>
-                            <span class="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded-full font-bold">+3б</span>
+                    <button type="button" data-diff="hard" class="btn-diff glass-card rounded-2xl p-3 text-left border-2 border-slate-700 hover:border-purple-400 hover:bg-purple-950/30 transition-all cursor-pointer relative active:scale-95">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                            <span class="font-extrabold text-purple-400 text-xs sm:text-sm">СЛОЖНЫЙ</span>
+                            <span id="badge-diff-hard" class="self-start bg-purple-500/20 text-purple-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
                         </div>
-                        <p class="text-xs text-slate-300 mb-2">Умножение до 10×10, +- до 50</p>
-                        <div class="text-[11px] text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-bolt text-purple-400"></i> Быстрые боты
-                        </div>
+                        <p id="desc-diff-hard" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 100</p>
                     </button>
 
                 </div>
             </div>
 
+            <!-- Nightmare Locked Difficulty Banner -->
+            <div id="nightmare-diff-banner" class="hidden mb-6 max-w-md mx-auto bg-gradient-to-r from-rose-950/90 via-red-950/80 to-rose-950/90 border-2 border-rose-500/60 rounded-2xl p-3.5 text-left shadow-lg shadow-rose-950/50">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-black text-rose-400 text-xs sm:text-sm tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-skull"></i> МАКСИМАЛЬНАЯ СЛОЖНОСТЬ
+                    </span>
+                    <span class="bg-rose-500/25 border border-rose-400/40 text-rose-200 text-xs px-2.5 py-0.5 rounded-full font-black">+4 б.</span>
+                </div>
+                <p id="desc-diff-nightmare" class="text-xs text-rose-200/90">Сложение до 100 • Сверхбыстрые боты и шары</p>
+            </div>
+
             <!-- Start Game Button -->
-            <button id="btn-start-game" class="w-full max-w-md py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-black text-xl tracking-wider shadow-lg shadow-purple-500/40 hover:shadow-purple-500/60 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto">
-                <i class="fa-solid fa-play"></i> НАЧАТЬ ИГРУ
+            <button id="btn-start-game" type="button" class="w-full max-w-md py-3.5 sm:py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-black text-lg sm:text-xl tracking-wider shadow-lg shadow-purple-500/40 hover:shadow-purple-500/60 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto animate-pulse-glow">
+                <i class="fa-solid fa-play"></i>
+                <span id="btn-start-text">НАЧАТЬ ВЫЖИВАНИЕ</span>
             </button>
         </section>
 
         <!-- ================= SCREEN 2: ACTIVE GAME ARENA ================= -->
-        <section id="screen-game" class="w-full flex-1 flex flex-col items-center justify-center hidden">
+        <section id="screen-game" class="w-full h-full flex-1 min-h-0 flex flex-col items-stretch justify-between hidden">
             
             <!-- Top HUD & Leaderboard Bar -->
-            <div class="w-full grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+            <div class="w-full shrink-0 grid grid-cols-1 lg:grid-cols-4 gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                 
                 <!-- Match Info Box -->
-                <div class="md:col-span-3 glass-panel rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 border border-slate-700">
+                <div id="hud-match-info" class="lg:col-span-3 glass-panel rounded-2xl p-2 sm:p-2.5 flex items-center justify-between gap-2 sm:gap-3 border border-slate-700">
                     
-                    <!-- Round Timer (30.0s) -->
-                    <div class="flex items-center gap-3 bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-700">
-                        <i class="fa-solid fa-clock text-amber-400 text-xl animate-pulse"></i>
+                    <!-- Round Timer -->
+                    <div class="shrink-0 flex items-center gap-2 sm:gap-3 bg-slate-900/90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-clock text-amber-400 text-lg sm:text-xl animate-pulse"></i>
                         <div>
-                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Время раунда</div>
-                            <div id="hud-timer" class="text-2xl font-black text-amber-300 tracking-tight font-mono">30.0 с</div>
+                            <div id="hud-timer-label" class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap">До конца</div>
+                            <div id="hud-timer" class="text-lg sm:text-2xl font-black text-amber-300 tracking-tight font-mono whitespace-nowrap">15.0 с</div>
                         </div>
                     </div>
 
                     <!-- Math Problem Banner -->
-                    <div class="flex-1 flex items-center justify-center bg-purple-950/40 border border-purple-500/30 rounded-xl px-4 py-2 min-w-[180px]">
-                        <span class="text-xs text-purple-300 uppercase font-bold mr-3">Пример:</span>
-                        <span id="hud-problem" class="text-2xl sm:text-3xl font-black tracking-widest text-cyan-300 font-mono">6 + 2 = ?</span>
+                    <div id="hud-problem-box" class="relative overflow-hidden flex-1 flex items-center justify-center bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-purple-950/80 border-2 border-purple-400/50 shadow-lg shadow-purple-500/20 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 min-w-0 transition-all duration-300">
+                        <div id="hud-problem-flash" class="pointer-events-none absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-300/35 to-purple-400/0 opacity-0 transition-opacity duration-300"></div>
+                        <span class="hidden sm:inline text-xs sm:text-sm text-purple-200 uppercase font-extrabold mr-2.5 tracking-wider">Пример:</span>
+                        <span id="hud-problem" class="inline-block text-xl sm:text-3xl md:text-4xl font-black tracking-wider text-cyan-300 glow-text-cyan font-mono whitespace-nowrap">Приготовьтесь...</span>
                     </div>
 
-                    <!-- Points Reward Tag -->
-                    <div class="bg-indigo-900/60 border border-indigo-500/30 px-3 py-2 rounded-xl text-center">
-                        <div class="text-[10px] text-indigo-300 font-bold uppercase">Награда</div>
-                        <div id="hud-points-per-ball" class="text-lg font-extrabold text-emerald-400">+2 б.</div>
+                    <!-- Points Reward Tag / Solved Counter in Training -->
+                    <div class="shrink-0 bg-indigo-900/60 border border-indigo-500/30 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-center min-w-[68px] sm:min-w-[82px]">
+                        <div id="hud-reward-label" class="text-[9px] sm:text-[10px] text-indigo-300 font-bold uppercase">Награда</div>
+                        <div id="hud-points-per-ball" class="text-base sm:text-lg font-extrabold text-emerald-400 whitespace-nowrap">+3 б.</div>
                     </div>
                 </div>
 
-                <!-- Mini Leaderboard -->
-                <div class="glass-panel rounded-2xl p-2.5 border border-slate-700 flex flex-col justify-center">
-                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1 flex justify-between items-center">
+                <!-- Compact Mini Leaderboard (1-row pill strip on mobile, stacked on desktop) -->
+                <div id="hud-leaderboard-card" class="glass-panel rounded-xl sm:rounded-2xl px-2 py-1.5 sm:p-2 border border-slate-700 flex flex-col justify-center">
+                    <div class="hidden lg:flex text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1 justify-between items-center">
                         <span>Лидеры</span>
                         <span id="hud-diff-badge" class="text-[10px] text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded-md border border-cyan-500/30">СРЕДНИЙ</span>
                     </div>
-                    <div id="hud-leaderboard-list" class="space-y-1">
+                    <div id="hud-leaderboard-list" class="grid grid-cols-4 lg:grid-cols-1 gap-1">
                         <!-- Inserted dynamically via JS -->
                     </div>
                 </div>
             </div>
 
-            <!-- Game Arena Canvas Box -->
-            <div class="relative w-full aspect-[4/3] max-h-[520px] glass-panel rounded-3xl overflow-hidden border-2 border-purple-500/30 shadow-2xl flex items-center justify-center bg-space-900" id="canvas-container">
+            <!-- Game Arena Canvas Box (Full Remaining Viewport) -->
+            <div class="relative flex-1 w-full h-full min-h-0 glass-panel rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-purple-500/30 shadow-2xl flex items-center justify-center bg-space-900" id="canvas-container">
                 
                 <!-- Main Dynamic Canvas -->
                 <canvas id="game-canvas" class="w-full h-full cursor-crosshair"></canvas>
 
-                <!-- Toast Overlay -->
-                <div id="arena-toast" class="absolute top-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-slate-900/90 border border-purple-500/50 shadow-xl text-sm font-bold text-white flex items-center gap-2 transition-all opacity-0 pointer-events-none z-20 transform -translate-y-4">
+                <!-- Toast Overlay (Subtle status banner for bot grabs) -->
+                <div id="arena-toast" class="absolute top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-purple-500/40 shadow-lg text-xs sm:text-sm font-bold text-white flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none z-20 transform -translate-y-4">
                     <span id="toast-icon">⚡</span>
                     <span id="toast-text">Новый раунд!</span>
-                </div>
-
-                <!-- PHASE 1: PREVIEW OVERLAY (4 SECONDS) -->
-                <div id="overlay-preview" class="absolute inset-0 bg-space-900/95 backdrop-blur-md flex flex-col items-center justify-center p-6 z-30 transition-all duration-300">
-                    <div class="inline-block px-4 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-bold tracking-widest uppercase mb-4">
-                        🧠 Реши пример! (Таймер на паузе)
-                    </div>
-                    
-                    <!-- Large Math Problem Text -->
-                    <div id="preview-math-text" class="text-5xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-400 to-purple-400 tracking-wider mb-8 font-mono">
-                        6 + 2 = ?
-                    </div>
-
-                    <!-- 4-Second Countdown Progress Bar -->
-                    <div class="w-full max-w-md bg-slate-800 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700 mb-3 shadow-inner">
-                        <div id="preview-progress" class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 h-full rounded-full transition-all duration-100 ease-linear w-full"></div>
-                    </div>
-                    
-                    <div id="preview-countdown-num" class="text-xl font-bold text-slate-300 font-mono">
-                        Вылет шаров через: <span class="text-cyan-400 font-black">4.0с</span>
-                    </div>
                 </div>
 
             </div>
         </section>
 
         <!-- ================= SCREEN 3: RESULTS / PODIUM ================= -->
-        <section id="screen-results" class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/30 text-center hidden my-auto animate-float">
+        <section id="screen-results" class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-500/30 text-center hidden my-auto">
             
-            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 text-3xl shadow-lg shadow-amber-500/20">
-                🏆
+            <div id="results-trophy-icon" class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 text-3xl shadow-lg shadow-amber-500/20">
+                🔥
             </div>
-            <h2 class="text-3xl sm:text-4xl font-black mb-1 glow-text-yellow">Раунд завершён!</h2>
+            <h2 id="results-title" class="text-3xl sm:text-4xl font-black mb-1 glow-text-yellow">Выживание окончено!</h2>
             <p id="results-subtitle" class="text-slate-300 text-sm mb-6">Отличная работа на арене!</p>
 
-            <!-- Leaderboard Podium List -->
+            <!-- Leaderboard Podium List (Hidden in Training) -->
             <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 mb-6 space-y-2.5" id="results-podium-list">
                 <!-- Inserted dynamically -->
             </div>
@@ -288,26 +317,27 @@
             <!-- Player Match Stats Grid -->
             <div class="grid grid-cols-3 gap-3 mb-8">
                 <div class="glass-card p-3 rounded-2xl border border-slate-700">
-                    <div class="text-[11px] text-slate-400 font-bold uppercase">Поймано шаров</div>
-                    <div id="stat-grabs" class="text-2xl font-black text-cyan-400">0</div>
+                    <div id="stat-grabs-label" class="text-[11px] text-slate-400 font-bold uppercase">Время выживания</div>
+                    <div id="stat-grabs" class="text-2xl font-black text-cyan-400">0.0 с</div>
                 </div>
                 <div class="glass-card p-3 rounded-2xl border border-slate-700">
                     <div class="text-[11px] text-slate-400 font-bold uppercase">Точность</div>
                     <div id="stat-accuracy" class="text-2xl font-black text-emerald-400">100%</div>
                 </div>
                 <div class="glass-card p-3 rounded-2xl border border-slate-700">
-                    <div class="text-[11px] text-slate-400 font-bold uppercase">Итого очков</div>
+                    <div id="stat-third-label" class="text-[11px] text-slate-400 font-bold uppercase">Итого очков</div>
                     <div id="stat-total-score" class="text-2xl font-black text-purple-400">0</div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button id="btn-replay" class="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black tracking-wider shadow-lg shadow-purple-500/30 transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-rotate-right"></i> ИГРАТЬ ЕЩЁ РАЗ
+                <button id="btn-replay" type="button" class="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black tracking-wider shadow-lg shadow-purple-500/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span id="btn-replay-text">ВЫЖИТЬ СНОВА</span>
                 </button>
-                <button id="btn-change-diff" class="py-3.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold tracking-wider transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-sliders"></i> СМЕНИТЬ СЛОЖНОСТЬ
+                <button id="btn-change-diff" type="button" class="py-3.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-house"></i> В МЕНЮ
                 </button>
             </div>
         </section>
@@ -320,7 +350,7 @@
     <!-- JavaScript Engine -->
     <script>
         /* ===================================================================
-           SOUND SYNTHESIZER (WEB AUDIO API)
+           SOUND SYNTHESIZER (WEB AUDIO API WITH PRECISE SCHEDULING)
            =================================================================== */
         class SoundEngine {
             constructor() {
@@ -336,60 +366,58 @@
                     }
                 }
                 if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume();
+                    this.ctx.resume().catch(() => {});
                 }
             }
 
-            playTone(freq, type, duration, gainVal = 0.1) {
+            playTone(freq, type, duration, gainVal = 0.1, delaySec = 0) {
                 if (!this.enabled || !this.ctx) return;
                 try {
+                    const startAt = this.ctx.currentTime + delaySec;
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.frequency.setValueAtTime(freq, startAt);
+                    gain.gain.setValueAtTime(0.0001, startAt);
+                    gain.gain.linearRampToValueAtTime(gainVal, startAt + 0.01);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch(e) {}
+                    osc.start(startAt);
+                    osc.stop(startAt + duration + 0.02);
+                } catch (e) {}
             }
 
             tick() { this.playTone(800, 'sine', 0.05, 0.05); }
+            countdownTick() { this.playTone(620, 'triangle', 0.09, 0.09); }
             whoosh() { this.playTone(350, 'sine', 0.1, 0.06); }
             
             handGrab() {
-                if (!this.enabled || !this.ctx) return;
-                this.playTone(880, 'sine', 0.08, 0.15);
-                setTimeout(() => this.playTone(1174.66, 'triangle', 0.12, 0.15), 50);
+                this.playTone(880, 'sine', 0.08, 0.14, 0);
+                this.playTone(1174.66, 'triangle', 0.12, 0.14, 0.05);
             }
 
             botGrab() {
-                if (!this.enabled || !this.ctx) return;
-                this.playTone(440, 'sawtooth', 0.1, 0.08);
-                setTimeout(() => this.playTone(330, 'sine', 0.1, 0.08), 60);
+                this.playTone(440, 'sawtooth', 0.1, 0.07, 0);
+                this.playTone(330, 'sine', 0.1, 0.07, 0.06);
             }
 
             correct() {
-                if (!this.enabled || !this.ctx) return;
                 [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-                    setTimeout(() => this.playTone(freq, 'triangle', 0.15, 0.12), idx * 60);
+                    this.playTone(freq, 'triangle', 0.15, 0.11, idx * 0.06);
                 });
             }
 
             wrong() {
-                if (!this.enabled || !this.ctx) return;
-                this.playTone(180, 'sawtooth', 0.25, 0.15);
-                setTimeout(() => this.playTone(140, 'sawtooth', 0.3, 0.15), 100);
+                this.playTone(180, 'sawtooth', 0.22, 0.13, 0);
+                this.playTone(140, 'sawtooth', 0.28, 0.13, 0.1);
             }
 
             blast() { this.playTone(300, 'sine', 0.15, 0.08); }
 
             fanfare() {
-                if (!this.enabled || !this.ctx) return;
                 [440, 554.37, 659.25, 880].forEach((freq, i) => {
-                    setTimeout(() => this.playTone(freq, 'triangle', 0.3, 0.15), i * 120);
+                    this.playTone(freq, 'triangle', 0.3, 0.14, i * 0.12);
                 });
             }
         }
@@ -403,487 +431,1040 @@
             easy: {
                 name: 'ЛЁГКИЙ',
                 points: 1,
-                botMinDelay: 3.2,
-                botMaxDelay: 5.5,
-                botErrorChance: 0.30
+                botMinDelay: 3.4,
+                botMaxDelay: 5.8,
+                botErrorChance: 0.32
             },
             medium: {
                 name: 'СРЕДНИЙ',
                 points: 2,
-                botMinDelay: 2.0,
-                botMaxDelay: 3.8,
-                botErrorChance: 0.15
+                botMinDelay: 2.2,
+                botMaxDelay: 4.0,
+                botErrorChance: 0.16
             },
             hard: {
                 name: 'СЛОЖНЫЙ',
                 points: 3,
-                botMinDelay: 1.2,
-                botMaxDelay: 2.5,
-                botErrorChance: 0.05
+                botMinDelay: 1.4,
+                botMaxDelay: 2.7,
+                botErrorChance: 0.07
+            },
+            nightmare: {
+                name: 'КОШМАР',
+                points: 4,
+                botMinDelay: 1.5,
+                botMaxDelay: 2.8,
+                botErrorChance: 0.08
             }
         };
 
+        const OPERATION_LABELS = {
+            add: {
+                name: 'Сложение',
+                easy: 'Сложение до 20',
+                medium: 'Сложение до 50',
+                hard: 'Сложение до 100'
+            },
+            sub: {
+                name: 'Вычитание',
+                easy: 'Вычитание до 20',
+                medium: 'Вычитание до 50',
+                hard: 'Вычитание до 100'
+            },
+            mul: {
+                name: 'Умножение',
+                easy: 'Таблица на 2–5',
+                medium: 'Таблица до 10×10',
+                hard: 'Умножение до 19×9'
+            },
+            div: {
+                name: 'Деление',
+                easy: 'Деление на 2–5',
+                medium: 'Таблица деления до 100',
+                hard: 'Деление до 171÷9'
+            }
+        };
+
+        function getPointsPerAnswer(mode = selectedMode, op = selectedOperation, diff = selectedDifficulty) {
+            if (mode === 'training') return 0;
+            if (mode === 'nightmare') return 4;
+            if (op === 'add' || op === 'sub') return 3;
+            return DIFFICULTY_CONFIG[diff].points;
+        }
+
+        function formatScore(val) {
+            return String(Number(val.toFixed(1)));
+        }
+
         const BOTS_INFO = [
-            { id: 'bot1', name: 'Робо-Макс', color: '#06b6d4', icon: '🤖', score: 0, anchorRelX: 0.08, anchorRelY: 0.08 },
-            { id: 'bot2', name: 'Кибер-Аня', color: '#ec4899', icon: '👾', score: 0, anchorRelX: 0.92, anchorRelY: 0.08 },
-            { id: 'bot3', name: 'Нейро-Лев', color: '#eab308', icon: '🦊', score: 0, anchorRelX: 0.92, anchorRelY: 0.92 }
+            { id: 'bot1', name: 'Робо-Макс', color: '#06b6d4', icon: '🤖', anchorRelX: 0.06, anchorRelY: 0.11 },
+            { id: 'bot2', name: 'Кибер-Аня', color: '#ec4899', icon: '👾', anchorRelX: 0.94, anchorRelY: 0.11 },
+            { id: 'bot3', name: 'Нейро-Лев', color: '#eab308', icon: '🦊', anchorRelX: 0.94, anchorRelY: 0.89 }
         ];
 
-        let selectedDifficulty = 'medium';
-        let playerName = 'Игрок';
+        const BALL_PALETTE = [
+            { fill: '#7c3aed', glow: '#a855f7', border: '#ddd6fe' },
+            { fill: '#0284c7', glow: '#06b6d4', border: '#bae6fd' },
+            { fill: '#db2777', glow: '#ec4899', border: '#fbcfe8' },
+            { fill: '#059669', glow: '#10b981', border: '#a7f3d0' },
+            { fill: '#d97706', glow: '#f59e0b', border: '#fde68a' },
+            { fill: '#4f46e5', glow: '#6366f1', border: '#c7d2fe' },
+            { fill: '#0d9488', glow: '#14b8a6', border: '#99f6e4' }
+        ];
 
-        // Player Glove State
-        const playerHand = {
-            x: 0,
-            y: 0,
+        const SURVIVAL_START_TIME = 15.0;
+        const SURVIVAL_TIME_BONUS = 3.0;
+        const SURVIVAL_MAX_TIME = 30.0;
+        const COUNTDOWN_STEP_DURATION = 0.55;
+        const PLAYER_COOLDOWN_DURATION = 0.5;
+
+        let selectedMode = 'survival'; // 'survival' | 'nightmare' | 'training'
+        let selectedOperation = 'add'; // 'add' | 'sub' | 'mul' | 'div'
+        let selectedDifficulty = 'medium';
+        const playerName = 'Вы';
+
+        let arenaWidth = 640;
+        let arenaHeight = 420;
+        let currentDpr = 1;
+
+        let lastTimerText = '';
+        let lastTimerUrgent = null;
+
+        let gameState = {
+            mode: 'survival',
+            phase: 'idle', // 'idle' | 'countdown' | 'playing' | 'ended'
+            countdownRemaining: 0,
+            lastCountdownStep: 0,
+            roundTimeLeft: SURVIVAL_START_TIME,
+            elapsedTime: 0,
+            solvedCount: 0,
+            currentProblem: null,
+            balls: [],
+            particles: [],
+            popups: [],
+            shockwaves: [],
+            wrongFlashAlpha: 0,
+            playerScore: 0,
+            playerGrabs: 0,
+            playerClicks: 0,
+            playerCooldown: 0,
+            bots: []
+        };
+
+        let playerHand = {
+            active: false,
+            state: 'extending',
             startX: 0,
             startY: 0,
+            currentX: 0,
+            currentY: 0,
             targetX: 0,
             targetY: 0,
             progress: 0,
-            state: 'IDLE', // 'IDLE', 'REACHING', 'RETRACTING', 'RECOILING'
-            ball: null,
-            isCorrect: false
+            grabbedBall: null,
+            isWrong: false
         };
 
-        // Match State
-        let matchActive = false;
-        let matchTimeRemaining = 30.0;
-        let currentPhase = 'NONE'; // 'PREVIEW' or 'BALLS'
-        let mainTimerInterval = null;
-        let previewTimerInterval = null;
+        let botClaws = [];
 
-        let currentProblem = { text: '', answer: 0 };
-        let activeBalls = [];
-        let botCursors = [];
-        let particles = [];
-        let botDecisionTimers = [];
+        let animationFrameId = null;
+        let lastFrameTime = 0;
+        let toastTimeoutId = null;
+        let problemSwapTimeoutId = null;
+        let confettiAnimationId = null;
 
-        let playerStats = { score: 0, correctGrabs: 0, wrongGrabs: 0 };
-        let isClickLocked = false;
-
-        // Canvas References
+        // DOM Elements
+        const screenStart = document.getElementById('screen-start');
+        const screenGame = document.getElementById('screen-game');
+        const screenResults = document.getElementById('screen-results');
+        const btnExitMenu = document.getElementById('btn-exit-menu');
+        const canvasContainer = document.getElementById('canvas-container');
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
-        const confettiCanvas = document.getElementById('confetti-canvas');
-        const confettiCtx = confettiCanvas.getContext('2d');
 
         /* ===================================================================
-           ROBUST CANVAS RESIZING SYSTEM
+           HIGH-DPI CANVAS RESIZING & ZOOM/RESIZE HANDLING
            =================================================================== */
-        function resizeCanvas() {
-            const container = document.getElementById('canvas-container');
-            if (!container) return;
+        function syncViewportLayout() {
+            const appBody = document.getElementById('app-body');
+            const mainContainer = document.getElementById('main-container');
+            const isPlayingScreen = !screenGame.classList.contains('hidden');
 
-            const rect = container.getBoundingClientRect();
-            const width = Math.max(rect.width || container.clientWidth || 0, 400);
-            const height = Math.max(rect.height || container.clientHeight || 0, 300);
-
-            if (width > 0 && height > 0) {
-                canvas.width = width;
-                canvas.height = height;
+            const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+            if (appBody) {
+                appBody.style.minHeight = `${Math.round(vh)}px`;
             }
 
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
+            if (isPlayingScreen) {
+                appBody.classList.add('h-[100dvh]', 'overflow-hidden');
+                mainContainer.classList.remove('max-w-5xl');
+                mainContainer.classList.add('max-w-none', 'h-full', 'min-h-0');
+            } else {
+                appBody.classList.remove('h-[100dvh]', 'overflow-hidden');
+                mainContainer.classList.remove('max-w-none', 'h-full', 'min-h-0');
+                mainContainer.classList.add('max-w-5xl');
+            }
         }
 
-        // ResizeObserver for reliable dimension tracking
-        const containerElem = document.getElementById('canvas-container');
-        if (containerElem && window.ResizeObserver) {
-            const ro = new ResizeObserver(() => resizeCanvas());
-            ro.observe(containerElem);
-        }
+        function resizeCanvas() {
+            syncViewportLayout();
+            if (!canvasContainer || !canvas) return;
+            const rect = canvasContainer.getBoundingClientRect();
+            const logicalW = Math.max(120, Math.round(rect.width || 640));
+            const logicalH = Math.max(120, Math.round(rect.height || 420));
+            const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
-        /* ===================================================================
-           INITIALIZATION & DOM EVENTS
-           =================================================================== */
-        window.addEventListener('DOMContentLoaded', () => {
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            const targetPixelW = Math.round(logicalW * dpr);
+            const targetPixelH = Math.round(logicalH * dpr);
 
-            // Sound Toggle Button
-            document.getElementById('btn-sound').addEventListener('click', () => {
-                soundEngine.enabled = !soundEngine.enabled;
-                soundEngine.init();
-                const icon = document.getElementById('sound-icon');
-                const text = document.getElementById('sound-text');
-                if (soundEngine.enabled) {
-                    icon.className = 'fa-solid fa-volume-high text-cyan-400';
-                    text.textContent = 'Звук вкл';
-                } else {
-                    icon.className = 'fa-solid fa-volume-xmark text-slate-500';
-                    text.textContent = 'Выкл';
+            arenaWidth = logicalW;
+            arenaHeight = logicalH;
+            currentDpr = dpr;
+
+            if (canvas.width !== targetPixelW || canvas.height !== targetPixelH) {
+                canvas.width = targetPixelW;
+                canvas.height = targetPixelH;
+
+                const targetRadius = Math.max(20, Math.min(36, Math.min(arenaWidth, arenaHeight) * 0.072));
+                for (const b of gameState.balls) {
+                    b.radius = targetRadius;
+                    if (!b.grabbed) {
+                        b.x = Math.max(b.radius + 10, Math.min(arenaWidth - b.radius - 10, b.x));
+                        b.y = Math.max(b.radius + 10, Math.min(arenaHeight - b.radius - 10, b.y));
+                    }
                 }
-            });
+            }
+        }
 
-            // Difficulty Cards Selection
-            document.querySelectorAll('.btn-diff').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectedDifficulty = btn.getAttribute('data-diff');
-                    
-                    document.querySelectorAll('.btn-diff').forEach(b => {
-                        b.classList.remove('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
-                        b.classList.add('border-slate-700');
-                    });
-                    
-                    btn.classList.remove('border-slate-700');
-                    btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
-                    soundEngine.tick();
-                });
-            });
-
-            // Start Game Button
-            document.getElementById('btn-start-game').addEventListener('click', () => {
-                soundEngine.init();
-                soundEngine.tick();
-                const nameInput = document.getElementById('input-player-name').value.trim();
-                if (nameInput) playerName = nameInput.substring(0, 12);
-                startMatch();
-            });
-
-            // Replay & Difficulty Buttons
-            document.getElementById('btn-replay').addEventListener('click', () => {
-                soundEngine.tick();
-                startMatch();
-            });
-
-            document.getElementById('btn-change-diff').addEventListener('click', () => {
-                soundEngine.tick();
-                showScreen('screen-start');
-            });
-
-            // Canvas Click / Tap
-            canvas.addEventListener('pointerdown', handleCanvasClick);
-
-            // Start Animation Loop
-            requestAnimationFrame(gameLoop);
+        const resizeObserver = new ResizeObserver(() => {
+            resizeCanvas();
         });
-
-        function showScreen(screenId) {
-            document.getElementById('screen-start').classList.add('hidden');
-            document.getElementById('screen-game').classList.add('hidden');
-            document.getElementById('screen-results').classList.add('hidden');
-            document.getElementById(screenId).classList.remove('hidden');
+        if (canvasContainer) {
+            resizeObserver.observe(canvasContainer);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', resizeCanvas);
         }
 
         /* ===================================================================
-           MATH PROBLEM & ANSWERS GENERATOR
+           MATH PROBLEM GENERATOR
            =================================================================== */
-        function generateMathProblem(difficulty) {
-            let a, b, text, answer;
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
 
-            if (difficulty === 'easy') {
-                answer = Math.floor(Math.random() * 18) + 3; // 3..20
-                a = Math.floor(Math.random() * (answer - 1)) + 1;
-                b = answer - a;
-                text = `${a} + ${b} = ?`;
-            } else if (difficulty === 'medium') {
-                const isAdd = Math.random() > 0.5;
-                if (isAdd) {
-                    answer = Math.floor(Math.random() * 16) + 4;
-                    a = Math.floor(Math.random() * (answer - 1)) + 1;
-                    b = answer - a;
+        function generateMathProblem(op, diff) {
+            let text = '';
+            let answer = 0;
+
+            if (op === 'add') {
+                if (diff === 'easy') {
+                    const a = randInt(1, 15);
+                    const b = randInt(1, 20 - a);
+                    answer = a + b;
+                    text = `${a} + ${b} = ?`;
+                } else if (diff === 'medium') {
+                    const a = randInt(8, 35);
+                    const b = randInt(5, 50 - a);
+                    answer = a + b;
                     text = `${a} + ${b} = ?`;
                 } else {
-                    a = Math.floor(Math.random() * 14) + 6;
-                    b = Math.floor(Math.random() * (a - 1)) + 1;
-                    answer = a - b;
-                    text = `${a} - ${b} = ?`;
+                    const a = randInt(18, 70);
+                    const b = randInt(10, 100 - a);
+                    answer = a + b;
+                    text = `${a} + ${b} = ?`;
                 }
-            } else {
-                const randType = Math.random();
-                if (randType < 0.6) {
-                    a = Math.floor(Math.random() * 9) + 2;
-                    b = Math.floor(Math.random() * 9) + 2;
+            } else if (op === 'sub') {
+                if (diff === 'easy') {
+                    const a = randInt(5, 20);
+                    const b = randInt(1, a - 1);
+                    answer = a - b;
+                    text = `${a} − ${b} = ?`;
+                } else if (diff === 'medium') {
+                    const a = randInt(15, 50);
+                    const b = randInt(5, a - 2);
+                    answer = a - b;
+                    text = `${a} − ${b} = ?`;
+                } else {
+                    const a = randInt(30, 100);
+                    const b = randInt(10, a - 5);
+                    answer = a - b;
+                    text = `${a} − ${b} = ?`;
+                }
+            } else if (op === 'mul') {
+                if (diff === 'easy') {
+                    const a = randInt(2, 5);
+                    const b = randInt(2, 9);
                     answer = a * b;
                     text = `${a} × ${b} = ?`;
-                } else if (randType < 0.8) {
-                    answer = Math.floor(Math.random() * 40) + 10;
-                    a = Math.floor(Math.random() * (answer - 5)) + 3;
-                    b = answer - a;
-                    text = `${a} + ${b} = ?`;
+                } else if (diff === 'medium') {
+                    const a = randInt(3, 10);
+                    const b = randInt(3, 10);
+                    answer = a * b;
+                    text = `${a} × ${b} = ?`;
                 } else {
-                    a = Math.floor(Math.random() * 35) + 15;
-                    b = Math.floor(Math.random() * (a - 5)) + 3;
-                    answer = a - b;
-                    text = `${a} - ${b} = ?`;
+                    const a = randInt(11, 19);
+                    const b = randInt(3, 9);
+                    answer = a * b;
+                    text = `${a} × ${b} = ?`;
+                }
+            } else {
+                if (diff === 'easy') {
+                    const divisor = randInt(2, 5);
+                    const quotient = randInt(2, 9);
+                    const dividend = divisor * quotient;
+                    answer = quotient;
+                    text = `${dividend} ÷ ${divisor} = ?`;
+                } else if (diff === 'medium') {
+                    const divisor = randInt(3, 10);
+                    const quotient = randInt(3, 10);
+                    const dividend = divisor * quotient;
+                    answer = quotient;
+                    text = `${dividend} ÷ ${divisor} = ?`;
+                } else {
+                    const divisor = randInt(3, 9);
+                    const quotient = randInt(11, 19);
+                    const dividend = divisor * quotient;
+                    answer = quotient;
+                    text = `${dividend} ÷ ${divisor} = ?`;
                 }
             }
 
-            return { text, answer };
+            const optionsSet = new Set([answer]);
+            let safety = 0;
+            while (optionsSet.size < 7 && safety < 250) {
+                safety++;
+                const spread = op === 'mul' ? 14 : (op === 'div' ? 8 : 10);
+                const offset = randInt(-spread, spread);
+                const candidate = answer + offset;
+                if (candidate >= 0 && candidate !== answer) {
+                    optionsSet.add(candidate);
+                }
+            }
+            while (optionsSet.size < 7) {
+                optionsSet.add(answer + optionsSet.size + 1);
+            }
+
+            const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+            return { text, answer, options };
         }
 
-        function generate7Answers(correctAnswer) {
-            const set = new Set([correctAnswer]);
-            while (set.size < 7) {
-                const offset = (Math.floor(Math.random() * 7) + 1) * (Math.random() > 0.5 ? 1 : -1);
-                let fake = correctAnswer + offset;
-                if (fake <= 0) fake = correctAnswer + Math.abs(offset) + 2;
-                set.add(fake);
+        function triggerProblemAnimation(newText) {
+            const problemEl = document.getElementById('hud-problem');
+            const flashEl = document.getElementById('hud-problem-flash');
+            const boxEl = document.getElementById('hud-problem-box');
+            if (!problemEl) return;
+
+            problemEl.textContent = newText;
+            problemEl.classList.remove('animate-problem-swap');
+            void problemEl.offsetWidth;
+            problemEl.classList.add('animate-problem-swap');
+
+            if (boxEl) {
+                boxEl.classList.remove('border-purple-400/50');
+                boxEl.classList.add('border-cyan-300', 'scale-[1.02]');
             }
-            const arr = Array.from(set);
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+            if (flashEl) {
+                flashEl.classList.remove('opacity-0');
+                flashEl.classList.add('opacity-100');
             }
-            return arr;
+
+            if (problemSwapTimeoutId) clearTimeout(problemSwapTimeoutId);
+            problemSwapTimeoutId = setTimeout(() => {
+                if (flashEl) {
+                    flashEl.classList.remove('opacity-100');
+                    flashEl.classList.add('opacity-0');
+                }
+                if (boxEl) {
+                    boxEl.classList.remove('border-cyan-300', 'scale-[1.02]');
+                    boxEl.classList.add('border-purple-400/50');
+                }
+            }, 340);
+
+            gameState.shockwaves.push({
+                x: arenaWidth * 0.5,
+                y: arenaHeight * 0.5,
+                radius: 16,
+                maxRadius: Math.max(arenaWidth, arenaHeight) * 0.42,
+                color: '#22d3ee',
+                alpha: 0.75
+            });
         }
 
         /* ===================================================================
-           MATCH FLOW & TIMERS
+           BALLS, PARTICLES, FLOATING POPUPS & BOTS AI (DT-DRIVEN)
            =================================================================== */
-        function startMatch() {
-            showScreen('screen-game');
-            
-            // Ensure Canvas is sized properly right after screen transition
-            requestAnimationFrame(() => resizeCanvas());
+        function spawnBalls(problem) {
+            resizeCanvas();
+            const w = arenaWidth;
+            const h = arenaHeight;
+            const radius = Math.max(20, Math.min(36, Math.min(w, h) * 0.072));
+            const marginX = radius + 22;
+            const marginY = radius + 26;
+            const minSpawnDist = radius * 2 + 12;
+            const placedBalls = [];
 
-            playerStats = { score: 0, correctGrabs: 0, wrongGrabs: 0 };
-            BOTS_INFO.forEach(bot => bot.score = 0);
-            matchTimeRemaining = 30.0;
-            matchActive = true;
+            const isNightmare = gameState.mode === 'nightmare';
+            const speedBoost = isNightmare
+                ? 52 + Math.min(95, gameState.solvedCount * 6)
+                : Math.min(85, gameState.solvedCount * 4.5);
 
-            document.getElementById('hud-diff-badge').textContent = DIFFICULTY_CONFIG[selectedDifficulty].name;
-            document.getElementById('hud-points-per-ball').textContent = `+${DIFFICULTY_CONFIG[selectedDifficulty].points} б.`;
+            gameState.balls = problem.options.map((val, idx) => {
+                const palette = BALL_PALETTE[idx % BALL_PALETTE.length];
+                let x = randInt(marginX, Math.max(marginX + 5, w - marginX));
+                let y = randInt(marginY, Math.max(marginY + 5, h - marginY));
 
-            updateScoreboardHUD();
-
-            // Initialize bot cursor/claw positions
-            botCursors = BOTS_INFO.map(bot => ({
-                id: bot.id,
-                name: bot.name,
-                color: bot.color,
-                icon: bot.icon,
-                relX: bot.anchorRelX,
-                relY: bot.anchorRelY,
-                x: canvas.width * bot.anchorRelX,
-                y: canvas.height * bot.anchorRelY,
-                targetX: canvas.width * bot.anchorRelX,
-                targetY: canvas.height * bot.anchorRelY,
-                grabState: 'IDLE'
-            }));
-
-            // Main 30-Second Round Timer
-            clearInterval(mainTimerInterval);
-            mainTimerInterval = setInterval(() => {
-                if (currentPhase === 'BALLS' && matchActive) {
-                    matchTimeRemaining -= 0.1;
-                    if (matchTimeRemaining <= 0) {
-                        matchTimeRemaining = 0;
-                        endMatch();
+                for (let attempt = 0; attempt < 120; attempt++) {
+                    const candidateX = randInt(marginX, Math.max(marginX + 5, w - marginX));
+                    const candidateY = randInt(marginY, Math.max(marginY + 5, h - marginY));
+                    const hasOverlap = placedBalls.some(p => Math.hypot(candidateX - p.x, candidateY - p.y) < minSpawnDist);
+                    if (!hasOverlap) {
+                        x = candidateX;
+                        y = candidateY;
+                        break;
                     }
-                    document.getElementById('hud-timer').textContent = `${matchTimeRemaining.toFixed(1)} с`;
                 }
-            }, 100);
 
-            startQuestionCycle();
-        }
-
-        function startQuestionCycle() {
-            if (matchTimeRemaining <= 0 || !matchActive) return;
-
-            botDecisionTimers.forEach(t => clearTimeout(t));
-            botDecisionTimers = [];
-
-            currentProblem = generateMathProblem(selectedDifficulty);
-            document.getElementById('hud-problem').textContent = currentProblem.text;
-
-            // Phase 1: PREVIEW (4 seconds)
-            currentPhase = 'PREVIEW';
-            activeBalls = [];
-
-            const previewOverlay = document.getElementById('overlay-preview');
-            const previewText = document.getElementById('preview-math-text');
-            const progress = document.getElementById('preview-progress');
-            const countdownNum = document.getElementById('preview-countdown-num');
-
-            previewText.textContent = currentProblem.text;
-            progress.style.width = '100%';
-            previewOverlay.classList.remove('hidden', 'opacity-0');
-            previewOverlay.classList.add('opacity-100');
-
-            clearInterval(previewTimerInterval);
-            const previewStartTime = Date.now();
-            const previewDurationMs = 4000;
-
-            previewTimerInterval = setInterval(() => {
-                const elapsed = Date.now() - previewStartTime;
-                const remaining = Math.max(0, (previewDurationMs - elapsed) / 1000);
-                
-                countdownNum.querySelector('span').textContent = `${remaining.toFixed(1)}с`;
-                progress.style.width = `${(remaining / 4.0) * 100}%`;
-
-                if (remaining <= 0) {
-                    clearInterval(previewTimerInterval);
-                    previewOverlay.classList.add('opacity-0');
-                    setTimeout(() => previewOverlay.classList.add('hidden'), 300);
-                    spawnBallsPhase();
-                }
-            }, 50);
-
-            soundEngine.blast();
-        }
-
-        function spawnBallsPhase() {
-            currentPhase = 'BALLS';
-            showToast('⚡ Вылет шаров! Ищи верный ответ!', 'purple');
-
-            const answersArray = generate7Answers(currentProblem.answer);
-            const ballRadius = Math.max(20, Math.min(canvas.width, canvas.height) * 0.06);
-
-            const colors = ['#06b6d4', '#a855f7', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-
-            activeBalls = answersArray.map((num, idx) => {
+                const speed = 72 + Math.random() * 58 + speedBoost;
                 const angle = Math.random() * Math.PI * 2;
-                // Moderate speed (~1.2 - 2.2 px/frame)
-                const speed = 1.2 + Math.random() * 1.0;
-                return {
+
+                const ball = {
                     id: idx,
-                    value: num,
-                    isCorrect: (num === currentProblem.answer),
-                    x: Math.random() * (canvas.width - ballRadius * 4) + ballRadius * 2,
-                    y: Math.random() * (canvas.height - ballRadius * 4) + ballRadius * 2,
+                    value: val,
+                    isCorrect: val === problem.answer,
+                    x,
+                    y,
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
-                    radius: ballRadius,
-                    color: colors[idx % colors.length],
-                    isWrongFlash: false,
-                    flashTimer: 0
+                    radius,
+                    palette,
+                    grabbed: false,
+                    wrongFlashTimer: 0,
+                    scale: 0.1
                 };
+                placedBalls.push(ball);
+                return ball;
             });
-
-            scheduleBotBehaviors();
         }
 
-        /* ===================================================================
-           BOT AI LOGIC
-           =================================================================== */
-        function scheduleBotBehaviors() {
-            const config = DIFFICULTY_CONFIG[selectedDifficulty];
-            const correctBall = activeBalls.find(b => b.isCorrect);
-            if (!correctBall) return;
+        function createBurstParticles(x, y, color, count = 18) {
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+                const speed = (2 + Math.random() * 4.5) * 60;
+                gameState.particles.push({
+                    x,
+                    y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 3 + Math.random() * 4,
+                    color,
+                    alpha: 1,
+                    decay: (0.025 + Math.random() * 0.02) * 60
+                });
+            }
+        }
 
-            BOTS_INFO.forEach((bot, idx) => {
-                const delaySeconds = config.botMinDelay + Math.random() * (config.botMaxDelay - config.botMinDelay);
-                const isError = Math.random() < config.botErrorChance;
-                const botCursor = botCursors[idx];
+        function spawnFloatingPopup(x, y, lines) {
+            const clampedX = Math.max(64, Math.min(arenaWidth - 64, x));
+            const clampedY = Math.max(48, Math.min(arenaHeight - 48, y));
+            gameState.popups.push({
+                x: clampedX,
+                y: clampedY,
+                vy: -56,
+                alpha: 1,
+                lines
+            });
+        }
 
-                const wrongBalls = activeBalls.filter(b => !b.isCorrect);
-                const targetBall = isError 
-                    ? (wrongBalls[Math.floor(Math.random() * wrongBalls.length)] || correctBall)
-                    : correctBall;
+        function getActiveBotConfig() {
+            if (gameState.mode === 'nightmare') {
+                return DIFFICULTY_CONFIG.nightmare;
+            }
+            return DIFFICULTY_CONFIG[selectedDifficulty];
+        }
 
-                if (botCursor && targetBall) {
-                    botCursor.targetX = targetBall.x;
-                    botCursor.targetY = targetBall.y;
-                }
+        function resetBotDecisionTimers() {
+            if (gameState.mode === 'training') return;
+            const cfg = getActiveBotConfig();
+            const speedFactor = gameState.mode === 'nightmare' ? 0.92 : Math.max(0.68, 1 - gameState.solvedCount * 0.015);
+            for (const bot of gameState.bots) {
+                const baseDelay = cfg.botMinDelay + Math.random() * (cfg.botMaxDelay - cfg.botMinDelay);
+                bot.decisionTimer = Math.max(0.85, baseDelay * speedFactor);
+                bot.hasActedThisCycle = false;
+            }
+        }
 
-                const timerId = setTimeout(() => {
-                    if (currentPhase !== 'BALLS' || !matchActive || playerHand.state !== 'IDLE') return;
+        function updateBotDecisions(dt) {
+            if (gameState.mode === 'training' || gameState.phase !== 'playing') return;
+            const cfg = getActiveBotConfig();
 
-                    if (isError && targetBall) {
-                        targetBall.isWrongFlash = true;
-                        targetBall.flashTimer = 20;
-                        createParticles(targetBall.x, targetBall.y, '#ef4444', 10);
-                        soundEngine.wrong();
-                    } else if (correctBall && activeBalls.includes(correctBall)) {
-                        botCursor.grabState = 'REACHING';
-                        soundEngine.whoosh();
+            for (let botIdx = 0; botIdx < gameState.bots.length; botIdx++) {
+                const bot = gameState.bots[botIdx];
+                if (bot.hasActedThisCycle) continue;
 
-                        setTimeout(() => {
-                            if (currentPhase !== 'BALLS') return;
-                            bot.score += config.points;
-                            soundEngine.botGrab();
-                            showToast(`${bot.icon} ${bot.name} поймал шар! (+${config.points})`, 'pink');
-                            createParticles(botCursor.x, botCursor.y, bot.color, 25);
-                            updateScoreboardHUD();
-                            startQuestionCycle();
-                        }, 400);
+                bot.decisionTimer -= dt;
+                if (bot.decisionTimer <= 0) {
+                    bot.hasActedThisCycle = true;
+                    const availableBalls = gameState.balls.filter(b => !b.grabbed);
+                    if (availableBalls.length === 0) continue;
+
+                    let targetBall = null;
+                    if (Math.random() < cfg.botErrorChance) {
+                        const wrongBalls = availableBalls.filter(b => !b.isCorrect);
+                        if (wrongBalls.length > 0) {
+                            targetBall = wrongBalls[Math.floor(Math.random() * wrongBalls.length)];
+                        }
+                    } else {
+                        targetBall = availableBalls.find(b => b.isCorrect);
                     }
-                }, delaySeconds * 1000);
 
-                botDecisionTimers.push(timerId);
-            });
+                    if (!targetBall) continue;
+
+                    const anchorX = bot.anchorRelX * arenaWidth;
+                    const anchorY = bot.anchorRelY * arenaHeight;
+
+                    botClaws[botIdx] = {
+                        active: true,
+                        state: 'extending',
+                        bot,
+                        anchorX,
+                        anchorY,
+                        currentX: anchorX,
+                        currentY: anchorY,
+                        targetBall,
+                        progress: 0
+                    };
+                }
+            }
         }
 
         /* ===================================================================
-           PLAYER INTERACTION & GLOVE ANIMATION
+           TOAST & HUD UPDATERS
            =================================================================== */
-        function handleCanvasClick(e) {
-            if (currentPhase !== 'BALLS' || isClickLocked || playerHand.state !== 'IDLE') return;
+        function showArenaToast(icon, text) {
+            const toast = document.getElementById('arena-toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastText = document.getElementById('toast-text');
+            if (!toast) return;
+
+            toastIcon.textContent = icon;
+            toastText.textContent = text;
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            if (toastTimeoutId) clearTimeout(toastTimeoutId);
+            toastTimeoutId = setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-4');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 1500);
+        }
+
+        function updateLeaderboardHUD() {
+            if (gameState.mode === 'training') return;
+            const listEl = document.getElementById('hud-leaderboard-list');
+            if (!listEl) return;
+
+            const participants = [
+                { id: 'player', name: playerName, score: gameState.playerScore, isPlayer: true, icon: '⚡' },
+                ...gameState.bots.map(b => ({ id: b.id, name: b.name, score: b.score, isPlayer: false, icon: b.icon }))
+            ];
+
+            participants.sort((a, b) => b.score - a.score);
+            const topScore = participants[0] ? participants[0].score : 0;
+
+            listEl.innerHTML = participants.map((p, idx) => {
+                const isLeading = topScore > 0 && p.score === topScore;
+                const highlight = p.isPlayer
+                    ? 'bg-purple-600/30 border-purple-400/50 text-white font-extrabold'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-300 font-semibold';
+                const shortName = p.isPlayer ? 'Вы' : p.name.split('-')[1] || p.name;
+                return `
+                    <div class="flex items-center justify-between text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border ${highlight}">
+                        <div class="flex items-center gap-1 truncate">
+                            <span class="hidden lg:inline text-[10px] text-slate-400 w-3">${idx + 1}.</span>
+                            <span>${isLeading ? '👑' : p.icon}</span>
+                            <span class="truncate lg:inline hidden">${p.name}</span>
+                            <span class="truncate lg:hidden">${shortName}</span>
+                        </div>
+                        <span class="font-mono font-bold text-cyan-300 ml-1">${formatScore(p.score)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateTimerHUD(force = false) {
+            const timerEl = document.getElementById('hud-timer');
+            if (!timerEl) return;
+
+            if (gameState.mode === 'training') {
+                const formatted = `${gameState.elapsedTime.toFixed(1)} с`;
+                if (force || formatted !== lastTimerText) {
+                    lastTimerText = formatted;
+                    timerEl.textContent = formatted;
+                }
+                if (force || lastTimerUrgent !== false) {
+                    lastTimerUrgent = false;
+                    timerEl.classList.remove('text-rose-400', 'text-amber-300');
+                    timerEl.classList.add('text-cyan-300');
+                }
+                return;
+            }
+
+            const formatted = `${Math.max(0, gameState.roundTimeLeft).toFixed(1)} с`;
+            if (force || formatted !== lastTimerText) {
+                lastTimerText = formatted;
+                timerEl.textContent = formatted;
+            }
+
+            const isUrgent = gameState.roundTimeLeft <= 5.0;
+            if (force || isUrgent !== lastTimerUrgent) {
+                lastTimerUrgent = isUrgent;
+                timerEl.classList.remove('text-cyan-300');
+                if (isUrgent) {
+                    timerEl.classList.remove('text-amber-300');
+                    timerEl.classList.add('text-rose-400');
+                } else {
+                    timerEl.classList.add('text-amber-300');
+                    timerEl.classList.remove('text-rose-400');
+                }
+            }
+        }
+
+        /* ===================================================================
+           OPERATION, DIFFICULTY & MODE UI
+           =================================================================== */
+        function updateDifficultyDescriptions() {
+            const opInfo = OPERATION_LABELS[selectedOperation];
+            document.getElementById('desc-diff-easy').textContent = opInfo.easy;
+            document.getElementById('desc-diff-medium').textContent = opInfo.medium;
+            document.getElementById('desc-diff-hard').textContent = opInfo.hard;
+            const nightmareDesc = document.getElementById('desc-diff-nightmare');
+            if (nightmareDesc) {
+                nightmareDesc.textContent = `${opInfo.hard} • Сверхбыстрые боты и шары`;
+            }
+
+            if (selectedMode === 'survival') {
+                document.getElementById('badge-diff-easy').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'easy')}б`;
+                document.getElementById('badge-diff-medium').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'medium')}б`;
+                document.getElementById('badge-diff-hard').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'hard')}б`;
+            }
+        }
+
+        function applyModeUI(mode) {
+            selectedMode = mode;
+            const tabSurvival = document.getElementById('tab-survival');
+            const tabNightmare = document.getElementById('tab-nightmare');
+            const tabTraining = document.getElementById('tab-training');
+            const modeChips = document.getElementById('mode-chips');
+            const diffSection = document.getElementById('difficulty-section');
+            const nightmareBanner = document.getElementById('nightmare-diff-banner');
+            const btnStart = document.getElementById('btn-start-game');
+            const btnStartText = document.getElementById('btn-start-text');
+
+            const defaultActive = ['bg-gradient-to-r', 'from-purple-600/80', 'to-cyan-600/80', 'text-white', 'shadow-md', 'border-purple-400/40'];
+            const nightmareActive = ['bg-gradient-to-r', 'from-rose-600/90', 'to-amber-600/90', 'text-white', 'shadow-md', 'border-rose-400/60'];
+            const inactiveClasses = ['text-slate-400', 'hover:text-white', 'hover:bg-slate-800/70', 'border-transparent'];
+
+            [tabSurvival, tabNightmare, tabTraining].forEach(tab => {
+                tab.classList.remove(...defaultActive, ...nightmareActive);
+                tab.classList.add(...inactiveClasses);
+            });
+
+            if (mode === 'survival') {
+                tabSurvival.classList.remove(...inactiveClasses);
+                tabSurvival.classList.add(...defaultActive);
+
+                diffSection.classList.remove('hidden');
+                nightmareBanner.classList.add('hidden');
+                btnStart.classList.remove('from-rose-600', 'via-red-600', 'to-amber-500');
+                btnStart.classList.add('from-purple-600', 'via-pink-600', 'to-cyan-500');
+
+                modeChips.innerHTML = `
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock"></i> 15 сек старт
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-robot"></i> 3 соперника
+                    </span>
+                `;
+                btnStartText.textContent = 'НАЧАТЬ ВЫЖИВАНИЕ';
+
+                updateDifficultyDescriptions();
+            } else if (mode === 'nightmare') {
+                tabNightmare.classList.remove(...inactiveClasses);
+                tabNightmare.classList.add(...nightmareActive);
+
+                diffSection.classList.add('hidden');
+                nightmareBanner.classList.remove('hidden');
+                btnStart.classList.remove('from-purple-600', 'via-pink-600', 'to-cyan-500');
+                btnStart.classList.add('from-rose-600', 'via-red-600', 'to-amber-500');
+
+                modeChips.innerHTML = `
+                    <span class="px-3 py-1.5 rounded-xl bg-rose-950/90 border border-rose-500/40 text-rose-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-skull"></i> Макс. сложность
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-crown"></i> +4 балла
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                    </span>
+                `;
+                btnStartText.textContent = 'НАЧАТЬ КОШМАР';
+                updateDifficultyDescriptions();
+            } else {
+                tabTraining.classList.remove(...inactiveClasses);
+                tabTraining.classList.add(...defaultActive);
+
+                diffSection.classList.remove('hidden');
+                nightmareBanner.classList.add('hidden');
+                btnStart.classList.remove('from-rose-600', 'via-red-600', 'to-amber-500');
+                btnStart.classList.add('from-purple-600', 'via-pink-600', 'to-cyan-500');
+
+                modeChips.innerHTML = `
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-infinity"></i> Без лимита времени
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-check"></i> Без ботов и баллов
+                    </span>
+                `;
+                btnStartText.textContent = 'НАЧАТЬ ТРЕНИРОВКУ';
+
+                document.getElementById('badge-diff-easy').textContent = 'Практика';
+                document.getElementById('badge-diff-medium').textContent = 'Практика';
+                document.getElementById('badge-diff-hard').textContent = 'Практика';
+                updateDifficultyDescriptions();
+            }
+        }
+
+        /* ===================================================================
+           MATCH LIFECYCLE & ROUND PHASES
+           =================================================================== */
+        function stopAllLoops() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function getEffectiveDifficulty() {
+            return selectedMode === 'nightmare' ? 'hard' : selectedDifficulty;
+        }
+
+        function startMatch() {
+            stopAllLoops();
+            if (confettiAnimationId) {
+                cancelAnimationFrame(confettiAnimationId);
+                confettiAnimationId = null;
+            }
+            const confCanvas = document.getElementById('confetti-canvas');
+            if (confCanvas) {
+                const cCtx = confCanvas.getContext('2d');
+                cCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+            }
+
+            const effectiveDiff = getEffectiveDifficulty();
+            const cfg = getActiveBotConfig();
+            const isTraining = selectedMode === 'training';
+
+            gameState = {
+                mode: selectedMode,
+                phase: isTraining ? 'playing' : 'countdown',
+                countdownRemaining: isTraining ? 0 : COUNTDOWN_STEP_DURATION * 3,
+                lastCountdownStep: isTraining ? 0 : 3,
+                roundTimeLeft: SURVIVAL_START_TIME,
+                elapsedTime: 0,
+                solvedCount: 0,
+                currentProblem: null,
+                balls: [],
+                particles: [],
+                popups: [],
+                shockwaves: [],
+                wrongFlashAlpha: 0,
+                playerScore: 0,
+                playerGrabs: 0,
+                playerClicks: 0,
+                playerCooldown: 0,
+                bots: isTraining ? [] : BOTS_INFO.map(b => ({ ...b, score: 0, decisionTimer: 0, hasActedThisCycle: false }))
+            };
+
+            playerHand.active = false;
+            botClaws = [];
+
+            screenStart.classList.add('hidden');
+            screenResults.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+            btnExitMenu.classList.remove('hidden');
+
+            const hudMatchInfo = document.getElementById('hud-match-info');
+            const hudLeaderboardCard = document.getElementById('hud-leaderboard-card');
+            const hudTimerLabel = document.getElementById('hud-timer-label');
+            const hudRewardLabel = document.getElementById('hud-reward-label');
+            const hudPointsEl = document.getElementById('hud-points-per-ball');
+            const exitIcon = document.getElementById('exit-menu-icon');
+            const exitText = document.getElementById('exit-menu-text');
+
+            if (isTraining) {
+                hudMatchInfo.classList.remove('lg:col-span-3');
+                hudMatchInfo.classList.add('lg:col-span-4');
+                hudLeaderboardCard.classList.add('hidden');
+                hudTimerLabel.textContent = 'Время';
+                hudRewardLabel.textContent = 'Решено';
+                hudPointsEl.textContent = '0';
+                exitIcon.className = 'fa-solid fa-flag-checkered text-rose-400';
+                exitText.textContent = 'Завершить';
+            } else {
+                hudMatchInfo.classList.add('lg:col-span-3');
+                hudMatchInfo.classList.remove('lg:col-span-4');
+                hudLeaderboardCard.classList.remove('hidden');
+                hudTimerLabel.textContent = 'До конца';
+                hudRewardLabel.textContent = 'Награда';
+                hudPointsEl.textContent = `+${formatScore(getPointsPerAnswer())} б.`;
+                document.getElementById('hud-diff-badge').textContent = `${OPERATION_LABELS[selectedOperation].name} • ${cfg.name}`;
+                exitIcon.className = 'fa-solid fa-house text-rose-400';
+                exitText.textContent = 'В меню';
+            }
+
+            updateTimerHUD(true);
+            updateLeaderboardHUD();
+            resizeCanvas();
+
+            if (isTraining) {
+                startNextProblemCycle();
+            } else {
+                document.getElementById('hud-problem').textContent = 'Приготовьтесь...';
+                soundEngine.countdownTick();
+            }
+
+            lastFrameTime = performance.now();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function startNextProblemCycle() {
+            if (gameState.phase === 'ended' || gameState.phase === 'idle') return;
+            if (gameState.mode !== 'training' && gameState.roundTimeLeft <= 0) return;
+
+            playerHand.active = false;
+            botClaws = [];
+            gameState.balls = [];
+            gameState.phase = 'playing';
+
+            const problem = generateMathProblem(selectedOperation, getEffectiveDifficulty());
+            gameState.currentProblem = problem;
+
+            triggerProblemAnimation(problem.text);
+
+            soundEngine.blast();
+            spawnBalls(problem);
+            resetBotDecisionTimers();
+        }
+
+        function exitToMenu() {
+            stopAllLoops();
+            gameState.phase = 'idle';
+            screenGame.classList.add('hidden');
+            screenResults.classList.add('hidden');
+            btnExitMenu.classList.add('hidden');
+            screenStart.classList.remove('hidden');
+            syncViewportLayout();
+        }
+
+        function endMatch() {
+            if (gameState.phase === 'ended') return;
+            gameState.phase = 'ended';
+            stopAllLoops();
+
+            screenGame.classList.add('hidden');
+            btnExitMenu.classList.add('hidden');
+            screenResults.classList.remove('hidden');
+            syncViewportLayout();
+
+            const trophyEl = document.getElementById('results-trophy-icon');
+            const titleEl = document.getElementById('results-title');
+            const subtitleEl = document.getElementById('results-subtitle');
+            const podiumList = document.getElementById('results-podium-list');
+            const statGrabsLabel = document.getElementById('stat-grabs-label');
+            const statThirdLabel = document.getElementById('stat-third-label');
+            const statThirdVal = document.getElementById('stat-total-score');
+            const btnReplayText = document.getElementById('btn-replay-text');
+
+            const accuracy = gameState.playerClicks > 0
+                ? Math.round((gameState.playerGrabs / gameState.playerClicks) * 100)
+                : 100;
+
+            if (gameState.mode === 'training') {
+                trophyEl.textContent = '🎯';
+                titleEl.textContent = 'Тренировка завершена!';
+                subtitleEl.textContent = `${OPERATION_LABELS[selectedOperation].name} • ${DIFFICULTY_CONFIG[selectedDifficulty].name}`;
+                podiumList.classList.add('hidden');
+
+                statGrabsLabel.textContent = 'Решено примеров';
+                document.getElementById('stat-grabs').textContent = gameState.playerGrabs;
+                document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+                statThirdLabel.textContent = 'Время';
+                statThirdVal.textContent = `${gameState.elapsedTime.toFixed(1)} с`;
+                btnReplayText.textContent = 'ТРЕНИРОВАТЬСЯ СНОВА';
+                soundEngine.blast();
+                return;
+            }
+
+            const isNightmare = gameState.mode === 'nightmare';
+            trophyEl.textContent = isNightmare ? '💀' : '🔥';
+            titleEl.textContent = isNightmare ? 'Кошмар завершён!' : 'Выживание окончено!';
+            podiumList.classList.remove('hidden');
+            statGrabsLabel.textContent = 'Время выживания';
+            statThirdLabel.textContent = 'Итого очков';
+            btnReplayText.textContent = isNightmare ? 'ИГРАТЬ СНОВА' : 'ВЫЖИТЬ СНОВА';
+
+            const participants = [
+                { name: playerName, score: gameState.playerScore, isPlayer: true, icon: '⚡' },
+                ...gameState.bots.map(b => ({ name: b.name, score: b.score, isPlayer: false, icon: b.icon }))
+            ];
+            participants.sort((a, b) => b.score - a.score);
+
+            const playerRank = participants.findIndex(p => p.isPlayer) + 1;
+            if (playerRank === 1) {
+                subtitleEl.textContent = '🥇 Поздравляем! Вы заняли 1-е место и продержались дольше всех!';
+                soundEngine.fanfare();
+                startConfetti();
+            } else {
+                subtitleEl.textContent = `Вы заняли ${playerRank}-е место! Попробуйте удержать таймер дольше!`;
+                soundEngine.blast();
+            }
+
+            const medals = ['🥇', '🥈', '🥉', '4️⃣'];
+            podiumList.innerHTML = participants.map((p, idx) => {
+                const rowStyle = p.isPlayer
+                    ? 'bg-gradient-to-r from-purple-900/70 to-cyan-900/50 border-purple-400/60 shadow-md'
+                    : 'bg-slate-800/60 border-slate-700/70';
+                return `
+                    <div class="flex items-center justify-between px-4 py-2.5 rounded-xl border ${rowStyle}">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">${medals[idx] || idx + 1}</span>
+                            <span class="text-lg">${p.icon}</span>
+                            <span class="font-extrabold text-sm sm:text-base ${p.isPlayer ? 'text-white' : 'text-slate-300'}">${p.name}</span>
+                        </div>
+                        <span class="font-mono font-black text-lg text-cyan-300">${formatScore(p.score)} б.</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('stat-grabs').textContent = `${gameState.elapsedTime.toFixed(1)} с`;
+            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+            statThirdVal.textContent = formatScore(gameState.playerScore);
+        }
+
+        /* ===================================================================
+           CANVAS INTERACTION (PLAYER CLICK / TAP)
+           =================================================================== */
+        function handleArenaPointerDown(clientX, clientY) {
+            if (gameState.phase !== 'playing') return;
+            if (gameState.playerCooldown > 0 || playerHand.active) return;
 
             const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+            const clickX = ((clientX - rect.left) / rect.width) * arenaWidth;
+            const clickY = ((clientY - rect.top) / rect.height) * arenaHeight;
 
-            for (let i = 0; i < activeBalls.length; i++) {
-                const ball = activeBalls[i];
-                const dist = Math.hypot(clickX - ball.x, clickY - ball.y);
-
-                if (dist <= ball.radius + 14) {
-                    playerHand.startX = canvas.width / 2;
-                    playerHand.startY = canvas.height + 40;
-                    playerHand.targetX = ball.x;
-                    playerHand.targetY = ball.y;
-                    playerHand.progress = 0;
-                    playerHand.state = 'REACHING';
-                    playerHand.ball = ball;
-                    playerHand.isCorrect = ball.isCorrect;
-                    soundEngine.whoosh();
-
-                    if (!ball.isCorrect) {
-                        playerStats.wrongGrabs++;
-                        ball.isWrongFlash = true;
-                        ball.flashTimer = 25;
-                        
-                        const container = document.getElementById('canvas-container');
-                        container.classList.add('animate-shake');
-                        setTimeout(() => container.classList.remove('animate-shake'), 400);
-
-                        isClickLocked = true;
-                        setTimeout(() => { isClickLocked = false; }, 500);
-                        showToast(`❌ Ошибка! (0.5с блок)`, 'red');
-                    }
+            let hitBall = null;
+            for (let i = gameState.balls.length - 1; i >= 0; i--) {
+                const b = gameState.balls[i];
+                if (b.grabbed) continue;
+                const dist = Math.hypot(clickX - b.x, clickY - b.y);
+                if (dist <= b.radius + 8) {
+                    hitBall = b;
                     break;
                 }
             }
-        }
 
-        /* ===================================================================
-           MAIN RENDER LOOP & CANVAS DRAWING
-           =================================================================== */
-        function gameLoop() {
-            try {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!hitBall) return;
 
-                drawCosmicGrid();
+            gameState.playerClicks++;
+            soundEngine.whoosh();
 
-                if (currentPhase === 'BALLS') {
-                    updateAndDrawBalls();
-                    updateAndDrawBotCursors();
-                    updateAndDrawPlayerHand();
+            const startX = arenaWidth * 0.5;
+            const startY = arenaHeight - 16;
+
+            if (hitBall.isCorrect) {
+                hitBall.grabbed = true;
+                botClaws = [];
+                for (const bot of gameState.bots) {
+                    bot.hasActedThisCycle = true;
                 }
 
-                updateAndDrawParticles();
-                updateAndDrawConfetti();
-            } catch(err) {
-                console.error("Render loop error:", err);
-            }
+                playerHand = {
+                    active: true,
+                    state: 'extending',
+                    startX,
+                    startY,
+                    currentX: startX,
+                    currentY: startY,
+                    targetX: hitBall.x,
+                    targetY: hitBall.y,
+                    progress: 0,
+                    grabbedBall: hitBall,
+                    isWrong: false
+                };
+            } else {
+                hitBall.wrongFlashTimer = PLAYER_COOLDOWN_DURATION;
+                gameState.playerCooldown = PLAYER_COOLDOWN_DURATION;
+                gameState.wrongFlashAlpha = 0.55;
+                soundEngine.wrong();
+                createBurstParticles(hitBall.x, hitBall.y, '#ef4444', 16);
+                spawnFloatingPopup(hitBall.x, hitBall.y - 10, [
+                    { text: 'Мимо!', color: '#f87171', size: 20 }
+                ]);
 
-            requestAnimationFrame(gameLoop);
+                canvasContainer.classList.remove('animate-shake');
+                void canvasContainer.offsetWidth;
+                canvasContainer.classList.add('animate-shake');
+
+                playerHand = {
+                    active: true,
+                    state: 'extending',
+                    startX,
+                    startY,
+                    currentX: startX,
+                    currentY: startY,
+                    targetX: hitBall.x,
+                    targetY: hitBall.y,
+                    progress: 0,
+                    grabbedBall: null,
+                    isWrong: true
+                };
+            }
         }
 
-        function drawCosmicGrid() {
-            const w = canvas.width;
-            const h = canvas.height;
+        canvas.addEventListener('mousedown', (e) => {
+            soundEngine.init();
+            handleArenaPointerDown(e.clientX, e.clientY);
+        });
 
-            ctx.save();
-            ctx.fillStyle = '#090d16';
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            soundEngine.init();
+            if (e.touches && e.touches.length > 0) {
+                handleArenaPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        /* ===================================================================
+           RENDERING & ANIMATION LOOP
+           =================================================================== */
+        function drawCosmicGrid(w, h) {
+            ctx.clearRect(0, 0, w, h);
+
+            const grad = ctx.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, Math.max(w, h) * 0.7);
+            grad.addColorStop(0, '#131c31');
+            grad.addColorStop(1, '#090d16');
+            ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, h);
 
-            // Subtle Grid
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.06)';
             ctx.lineWidth = 1;
             const step = 40;
             for (let x = 0; x < w; x += step) {
@@ -898,260 +1479,473 @@
                 ctx.lineTo(w, y);
                 ctx.stroke();
             }
+        }
+
+        function drawArenaAtmosphere(w, h, now, dt) {
+            for (let i = gameState.shockwaves.length - 1; i >= 0; i--) {
+                const sw = gameState.shockwaves[i];
+                sw.radius += 540 * dt;
+                sw.alpha -= 1.55 * dt;
+                if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+                    gameState.shockwaves.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.strokeStyle = sw.color;
+                ctx.globalAlpha = Math.max(0, sw.alpha);
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            if (gameState.mode !== 'training' && gameState.phase === 'playing' && gameState.roundTimeLeft <= 5.0) {
+                const pulse = 0.22 + 0.16 * Math.sin(now * 0.014);
+                const rad = Math.max(w, h) * 0.65;
+                const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, rad * 0.45, w * 0.5, h * 0.5, rad);
+                vig.addColorStop(0, 'rgba(239, 68, 68, 0)');
+                vig.addColorStop(1, `rgba(239, 68, 68, ${pulse.toFixed(3)})`);
+
+                ctx.save();
+                ctx.fillStyle = vig;
+                ctx.fillRect(0, 0, w, h);
+
+                ctx.strokeStyle = `rgba(248, 113, 113, ${(pulse * 1.9).toFixed(3)})`;
+                ctx.lineWidth = 4;
+                ctx.strokeRect(2, 2, w - 4, h - 4);
+                ctx.restore();
+            }
+
+            if (gameState.wrongFlashAlpha > 0) {
+                ctx.save();
+                ctx.fillStyle = `rgba(239, 68, 68, ${gameState.wrongFlashAlpha.toFixed(3)})`;
+                ctx.fillRect(0, 0, w, h);
+                ctx.restore();
+                gameState.wrongFlashAlpha = Math.max(0, gameState.wrongFlashAlpha - 1.6 * dt);
+            }
+        }
+
+        function drawArenaBases(w, h) {
+            if (gameState.mode !== 'training') {
+                gameState.bots.forEach((bot, idx) => {
+                    const bx = bot.anchorRelX * w;
+                    const by = bot.anchorRelY * h;
+                    const isFiring = botClaws[idx] && botClaws[idx].active;
+
+                    ctx.save();
+                    ctx.translate(bx, by);
+
+                    ctx.shadowColor = bot.color;
+                    ctx.shadowBlur = isFiring ? 18 : 8;
+
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.fill();
+                    ctx.lineWidth = isFiring ? 3 : 2;
+                    ctx.strokeStyle = bot.color;
+                    ctx.stroke();
+
+                    ctx.shadowBlur = 0;
+                    ctx.font = '15px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(bot.icon, 0, 1);
+
+                    ctx.restore();
+                });
+            }
+
+            const px = w * 0.5;
+            const py = h - 16;
+            const onCooldown = gameState.playerCooldown > 0;
+            const baseColor = onCooldown ? '#ef4444' : '#22d3ee';
+
+            ctx.save();
+            ctx.translate(px, py);
+
+            ctx.shadowColor = baseColor;
+            ctx.shadowBlur = onCooldown ? 16 : 12;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 20, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = onCooldown ? 'rgba(239, 68, 68, 0.35)' : baseColor;
+            ctx.stroke();
+
+            if (onCooldown) {
+                const pct = Math.max(0, gameState.playerCooldown / PLAYER_COOLDOWN_DURATION);
+                ctx.beginPath();
+                ctx.arc(0, 0, 20, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct);
+                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = '#ef4444';
+                ctx.stroke();
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(onCooldown ? '⏳' : '⚡', 0, 1);
+
             ctx.restore();
         }
 
-        function updateAndDrawBalls() {
-            const w = canvas.width;
-            const h = canvas.height;
+        function drawCountdownOverlay(w, h) {
+            const step = Math.ceil(gameState.countdownRemaining / COUNTDOWN_STEP_DURATION);
+            const label = step > 0 ? String(step) : '1';
+            const stepProgress = 1 - ((gameState.countdownRemaining % COUNTDOWN_STEP_DURATION) / COUNTDOWN_STEP_DURATION);
+            const scale = 0.85 + Math.sin(stepProgress * Math.PI) * 0.25;
 
-            for (let i = 0; i < activeBalls.length; i++) {
-                const ball = activeBalls[i];
+            ctx.save();
+            ctx.fillStyle = 'rgba(9, 13, 22, 0.45)';
+            ctx.fillRect(0, 0, w, h);
 
-                // Bounce & physics if not currently being pulled down by glove
-                if (playerHand.state !== 'RETRACTING' || playerHand.ball !== ball) {
-                    ball.x += ball.vx;
-                    ball.y += ball.vy;
+            ctx.translate(w / 2, h / 2);
+            ctx.scale(scale, scale);
 
-                    if (ball.x - ball.radius < 0) {
-                        ball.x = ball.radius;
-                        ball.vx *= -1;
-                    } else if (ball.x + ball.radius > w) {
-                        ball.x = w - ball.radius;
-                        ball.vx *= -1;
-                    }
-                    if (ball.y - ball.radius < 0) {
-                        ball.y = ball.radius;
-                        ball.vy *= -1;
-                    } else if (ball.y + ball.radius > h) {
-                        ball.y = h - ball.radius;
-                        ball.vy *= -1;
-                    }
+            ctx.shadowColor = '#06b6d4';
+            ctx.shadowBlur = 28;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '900 84px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, 0, 0);
+
+            ctx.restore();
+        }
+
+        function updateAndDrawBalls(w, h, dt) {
+            const balls = gameState.balls;
+
+            for (const b of balls) {
+                if (b.scale < 1) {
+                    b.scale = Math.min(1, b.scale + 4.8 * dt);
+                }
+                if (b.wrongFlashTimer > 0) {
+                    b.wrongFlashTimer = Math.max(0, b.wrongFlashTimer - dt);
                 }
 
-                if (ball.isWrongFlash) {
-                    ball.flashTimer--;
-                    if (ball.flashTimer <= 0) ball.isWrongFlash = false;
-                }
+                if (!b.grabbed) {
+                    b.x += b.vx * dt;
+                    b.y += b.vy * dt;
 
-                // Render Ball
+                    if (b.x - b.radius < 8) {
+                        b.x = b.radius + 8;
+                        b.vx = Math.abs(b.vx);
+                    } else if (b.x + b.radius > w - 8) {
+                        b.x = w - b.radius - 8;
+                        b.vx = -Math.abs(b.vx);
+                    }
+
+                    if (b.y - b.radius < 8) {
+                        b.y = b.radius + 8;
+                        b.vy = Math.abs(b.vy);
+                    } else if (b.y + b.radius > h - 8) {
+                        b.y = h - b.radius - 8;
+                        b.vy = -Math.abs(b.vy);
+                    }
+                }
+            }
+
+            for (let i = 0; i < balls.length; i++) {
+                const b1 = balls[i];
+                if (b1.grabbed) continue;
+
+                for (let j = i + 1; j < balls.length; j++) {
+                    const b2 = balls[j];
+                    if (b2.grabbed) continue;
+
+                    const dx = b2.x - b1.x;
+                    const dy = b2.y - b1.y;
+                    const dist = Math.hypot(dx, dy);
+                    const minDist = b1.radius + b2.radius + 4;
+
+                    if (dist < minDist) {
+                        const nx = dist > 0.001 ? dx / dist : 1;
+                        const ny = dist > 0.001 ? dy / dist : 0;
+
+                        const overlap = minDist - dist;
+                        b1.x = Math.max(b1.radius + 8, Math.min(w - b1.radius - 8, b1.x - nx * overlap * 0.5));
+                        b1.y = Math.max(b1.radius + 8, Math.min(h - b1.radius - 8, b1.y - ny * overlap * 0.5));
+                        b2.x = Math.max(b2.radius + 8, Math.min(w - b2.radius - 8, b2.x + nx * overlap * 0.5));
+                        b2.y = Math.max(b2.radius + 8, Math.min(h - b2.radius - 8, b2.y + ny * overlap * 0.5));
+
+                        const rvx = b2.vx - b1.vx;
+                        const rvy = b2.vy - b1.vy;
+                        const velAlongNormal = rvx * nx + rvy * ny;
+
+                        if (velAlongNormal < 0) {
+                            b1.vx += velAlongNormal * nx;
+                            b1.vy += velAlongNormal * ny;
+                            b2.vx -= velAlongNormal * nx;
+                            b2.vy -= velAlongNormal * ny;
+                        }
+                    }
+                }
+            }
+
+            for (const b of balls) {
+                const isFlashingWrong = b.wrongFlashTimer > 0;
+                const coreCol = isFlashingWrong ? '#ef4444' : b.palette.fill;
+                const glowCol = isFlashingWrong ? '#f87171' : b.palette.glow;
+                const borderCol = isFlashingWrong ? '#fecaca' : b.palette.border;
+
                 ctx.save();
-                ctx.beginPath();
-                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.translate(b.x, b.y);
+                ctx.scale(b.scale, b.scale);
 
-                // Neon Glow
-                ctx.shadowColor = ball.isWrongFlash ? '#ef4444' : ball.color;
-                ctx.shadowBlur = ball.isWrongFlash ? 25 : 15;
+                ctx.shadowColor = glowCol;
+                ctx.shadowBlur = 20;
 
-                // Radial Gradient Fill
-                const grad = ctx.createRadialGradient(
-                    ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.1,
-                    ball.x, ball.y, ball.radius
+                const sphereGrad = ctx.createRadialGradient(
+                    -b.radius * 0.32,
+                    -b.radius * 0.32,
+                    b.radius * 0.1,
+                    0,
+                    0,
+                    b.radius
                 );
+                sphereGrad.addColorStop(0, glowCol);
+                sphereGrad.addColorStop(0.55, coreCol);
+                sphereGrad.addColorStop(1, '#090d16');
 
-                if (ball.isWrongFlash) {
-                    grad.addColorStop(0, '#fca5a5');
-                    grad.addColorStop(1, '#dc2626');
-                } else {
-                    grad.addColorStop(0, '#ffffff');
-                    grad.addColorStop(0.35, ball.color);
-                    grad.addColorStop(1, '#0f172a');
-                }
-
-                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = sphereGrad;
                 ctx.fill();
 
                 ctx.lineWidth = 2.5;
-                ctx.strokeStyle = ball.isWrongFlash ? '#ef4444' : '#ffffff';
+                ctx.strokeStyle = borderCol;
                 ctx.stroke();
 
-                // Ball Text Number
                 ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.arc(0, 0, b.radius * 0.78, 0, Math.PI * 2);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(-b.radius * 0.3, -b.radius * 0.34, b.radius * 0.28, b.radius * 0.16, -0.65, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.42)';
+                ctx.fill();
+
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+                ctx.shadowBlur = 6;
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `bold ${Math.round(ball.radius * 0.9)}px Inter, sans-serif`;
+                ctx.font = `900 ${Math.round(b.radius * 0.72)}px Inter, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(ball.value, ball.x, ball.y);
+                ctx.fillText(String(b.value), 0, 1);
 
                 ctx.restore();
             }
         }
 
-        function updateAndDrawPlayerHand() {
-            if (playerHand.state === 'IDLE') return;
+        function updateAndDrawBotClaws(dt) {
+            if (gameState.mode === 'training') return;
+            const clawSpeed = 5.2;
+            for (let i = 0; i < botClaws.length; i++) {
+                const claw = botClaws[i];
+                if (!claw || !claw.active) continue;
 
-            if (playerHand.state === 'REACHING') {
-                playerHand.progress += 0.14;
-                if (playerHand.progress >= 1) {
-                    playerHand.progress = 1;
-                    if (playerHand.isCorrect) {
-                        playerHand.state = 'RETRACTING';
-                        playerHand.progress = 0;
-                        soundEngine.handGrab();
-                        soundEngine.correct();
-                        createParticles(playerHand.targetX, playerHand.targetY, '#22c55e', 25);
-                    } else {
-                        playerHand.state = 'RECOILING';
-                        playerHand.progress = 0;
-                        soundEngine.wrong();
-                        createParticles(playerHand.targetX, playerHand.targetY, '#ef4444', 15);
+                const target = claw.targetBall;
+                if (claw.state === 'extending') {
+                    claw.progress += clawSpeed * dt;
+                    if (claw.progress >= 1) {
+                        claw.progress = 1;
+                        if (target && !target.grabbed) {
+                            target.grabbed = true;
+                            claw.state = 'retracting';
+                            soundEngine.botGrab();
+                            createBurstParticles(target.x, target.y, claw.bot.color, 15);
+                        } else {
+                            claw.state = 'retracting';
+                            claw.targetBall = null;
+                        }
+                    }
+                    const tx = target ? target.x : claw.currentX;
+                    const ty = target ? target.y : claw.currentY;
+                    claw.currentX = claw.anchorX + (tx - claw.anchorX) * claw.progress;
+                    claw.currentY = claw.anchorY + (ty - claw.anchorY) * claw.progress;
+                } else if (claw.state === 'retracting') {
+                    claw.progress -= clawSpeed * dt;
+                    if (claw.progress <= 0) {
+                        claw.active = false;
+                        if (claw.targetBall) {
+                            const grabbed = claw.targetBall;
+                            if (grabbed.isCorrect) {
+                                const pts = getPointsPerAnswer();
+                                claw.bot.score += pts;
+                                gameState.solvedCount++;
+                                updateLeaderboardHUD();
+                                showArenaToast(claw.bot.icon, `${claw.bot.name} забрал шар! (+${formatScore(pts)})`);
+                                startNextProblemCycle();
+                                return;
+                            } else {
+                                gameState.balls = gameState.balls.filter(b => b !== grabbed);
+                            }
+                        }
+                        continue;
+                    }
+                    const tx = claw.targetBall ? claw.targetBall.x : claw.currentX;
+                    const ty = claw.targetBall ? claw.targetBall.y : claw.currentY;
+                    claw.currentX = claw.anchorX + (tx - claw.anchorX) * claw.progress;
+                    claw.currentY = claw.anchorY + (ty - claw.anchorY) * claw.progress;
+                    if (claw.targetBall) {
+                        claw.targetBall.x = claw.currentX;
+                        claw.targetBall.y = claw.currentY;
                     }
                 }
-            } else if (playerHand.state === 'RETRACTING') {
-                playerHand.progress += 0.08;
-                if (playerHand.ball) {
-                    playerHand.ball.x = playerHand.targetX + (playerHand.startX - playerHand.targetX) * playerHand.progress;
-                    playerHand.ball.y = playerHand.targetY + (playerHand.startY - playerHand.targetY) * playerHand.progress;
-                }
+
+                const angle = Math.atan2(claw.currentY - claw.anchorY, claw.currentX - claw.anchorX);
+                const isClosed = claw.state === 'retracting' && Boolean(claw.targetBall);
+                const jawSpread = isClosed ? 0.24 : 0.68;
+
+                ctx.save();
+                ctx.strokeStyle = claw.bot.color;
+                ctx.lineWidth = 4;
+                ctx.shadowColor = claw.bot.color;
+                ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(claw.anchorX, claw.anchorY);
+                ctx.lineTo(claw.currentX, claw.currentY);
+                ctx.stroke();
+
+                ctx.translate(claw.currentX, claw.currentY);
+                ctx.rotate(angle);
+
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(0, 0, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                [-1, 1].forEach((dir) => {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 15, dir * jawSpread, dir * (jawSpread + 0.55), dir < 0);
+                    ctx.lineWidth = 3.5;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                });
+
+                ctx.restore();
+            }
+        }
+
+        function updateAndDrawPlayerHand(dt) {
+            if (!playerHand.active) return;
+
+            if (playerHand.state === 'extending') {
+                playerHand.progress += 8.6 * dt;
                 if (playerHand.progress >= 1) {
-                    playerHand.state = 'IDLE';
-                    const config = DIFFICULTY_CONFIG[selectedDifficulty];
-                    playerStats.score += config.points;
-                    playerStats.correctGrabs++;
-                    showToast(`🚀 СХВАЧЕНО! (+${config.points})`, 'green');
-                    updateScoreboardHUD();
-                    startQuestionCycle();
+                    playerHand.progress = 1;
+                    playerHand.state = 'retracting';
+                    if (playerHand.grabbedBall && !playerHand.isWrong) {
+                        soundEngine.handGrab();
+                        createBurstParticles(playerHand.targetX, playerHand.targetY, '#eab308', 24);
+                    }
+                }
+            } else if (playerHand.state === 'retracting') {
+                playerHand.progress -= 7.4 * dt;
+                if (playerHand.progress <= 0) {
+                    playerHand.active = false;
+                    if (playerHand.grabbedBall && !playerHand.isWrong) {
+                        playerHand.grabbedBall.grabbed = true;
+                        gameState.balls = gameState.balls.filter(b => b !== playerHand.grabbedBall);
+                        gameState.playerGrabs++;
+                        gameState.solvedCount++;
+                        soundEngine.correct();
+
+                        if (gameState.mode === 'training') {
+                            document.getElementById('hud-points-per-ball').textContent = String(gameState.playerGrabs);
+                            spawnFloatingPopup(playerHand.targetX, playerHand.targetY - 12, [
+                                { text: 'Верно! 🎯', color: '#34d399', size: 22 }
+                            ]);
+                        } else {
+                            const pts = getPointsPerAnswer();
+                            gameState.playerScore += pts;
+                            gameState.roundTimeLeft = Math.min(SURVIVAL_MAX_TIME, gameState.roundTimeLeft + SURVIVAL_TIME_BONUS);
+                            updateTimerHUD(true);
+                            updateLeaderboardHUD();
+                            spawnFloatingPopup(playerHand.targetX, playerHand.targetY - 14, [
+                                { text: `+${formatScore(pts)} б.`, color: '#facc15', size: 23 },
+                                { text: `+${SURVIVAL_TIME_BONUS.toFixed(1)} с`, color: '#34d399', size: 17 }
+                            ]);
+                        }
+                        startNextProblemCycle();
+                    }
                     return;
                 }
-            } else if (playerHand.state === 'RECOILING') {
-                playerHand.progress += 0.15;
-                if (playerHand.progress >= 1) playerHand.state = 'IDLE';
             }
 
-            let currX, currY;
-            if (playerHand.state === 'REACHING') {
-                currX = playerHand.startX + (playerHand.targetX - playerHand.startX) * playerHand.progress;
-                currY = playerHand.startY + (playerHand.targetY - playerHand.startY) * playerHand.progress;
-            } else {
-                currX = playerHand.targetX + (playerHand.startX - playerHand.targetX) * playerHand.progress;
-                currY = playerHand.targetY + (playerHand.startY - playerHand.targetY) * playerHand.progress;
+            playerHand.currentX = playerHand.startX + (playerHand.targetX - playerHand.startX) * playerHand.progress;
+            playerHand.currentY = playerHand.startY + (playerHand.targetY - playerHand.startY) * playerHand.progress;
+
+            if (playerHand.grabbedBall && playerHand.state === 'retracting') {
+                playerHand.grabbedBall.x = playerHand.currentX;
+                playerHand.grabbedBall.y = playerHand.currentY;
             }
+
+            const handColor = playerHand.isWrong ? '#ef4444' : '#22d3ee';
+            const angle = Math.atan2(playerHand.currentY - playerHand.startY, playerHand.currentX - playerHand.startX);
+            const isGripping = playerHand.state === 'retracting' && !playerHand.isWrong;
+            const spread = isGripping ? 0.25 : 0.72;
 
             ctx.save();
-            
-            // Arm Beam
+            ctx.strokeStyle = handColor;
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.shadowColor = handColor;
+            ctx.shadowBlur = 18;
+
             ctx.beginPath();
             ctx.moveTo(playerHand.startX, playerHand.startY);
-            ctx.lineTo(currX, currY);
-            ctx.strokeStyle = playerHand.isCorrect ? 'rgba(168, 85, 247, 0.7)' : 'rgba(239, 68, 68, 0.7)';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.shadowColor = playerHand.isCorrect ? '#a855f7' : '#ef4444';
-            ctx.shadowBlur = 15;
+            ctx.lineTo(playerHand.currentX, playerHand.currentY);
             ctx.stroke();
 
-            // Palm Base
+            ctx.translate(playerHand.currentX, playerHand.currentY);
+            ctx.rotate(angle);
+
+            const coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 14);
+            coreGrad.addColorStop(0, '#ffffff');
+            coreGrad.addColorStop(0.5, handColor);
+            coreGrad.addColorStop(1, playerHand.isWrong ? '#991b1b' : '#0891b2');
+
             ctx.beginPath();
-            ctx.arc(currX, currY, 16, 0, Math.PI * 2);
-            ctx.fillStyle = playerHand.isCorrect ? '#a855f7' : '#ef4444';
+            ctx.arc(0, 0, 13, 0, Math.PI * 2);
+            ctx.fillStyle = coreGrad;
             ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
 
-            // Fingers/Glove
-            const isGrabbing = playerHand.state === 'RETRACTING' || (playerHand.state === 'REACHING' && playerHand.progress > 0.7);
-            const fingerAngles = [-0.6, -0.3, 0, 0.3, 0.6];
-            const fingerLen = isGrabbing ? 14 : 22;
-
-            fingerAngles.forEach((angOffset) => {
-                const baseAng = Math.atan2(playerHand.targetY - playerHand.startY, playerHand.targetX - playerHand.startX) - Math.PI / 2;
-                const finalAng = baseAng + angOffset + (isGrabbing ? (angOffset > 0 ? -0.4 : 0.4) : 0);
-                
-                const fx = currX + Math.cos(finalAng) * fingerLen;
-                const fy = currY + Math.sin(finalAng) * fingerLen;
-
+            [-1, 1].forEach((dir) => {
                 ctx.beginPath();
-                ctx.moveTo(currX, currY);
-                ctx.lineTo(fx, fy);
-                ctx.strokeStyle = '#ffffff';
+                ctx.arc(0, 0, 19, dir * spread, dir * (spread + 0.58), dir < 0);
                 ctx.lineWidth = 4;
                 ctx.lineCap = 'round';
+                ctx.strokeStyle = isGripping ? '#facc15' : '#ffffff';
                 ctx.stroke();
             });
 
             ctx.restore();
         }
 
-        function updateAndDrawBotCursors() {
-            botCursors.forEach((botC) => {
-                const anchorX = canvas.width * botC.relX;
-                const anchorY = canvas.height * botC.relY;
-
-                botC.x += (botC.targetX - botC.x) * 0.05;
-                botC.y += (botC.targetY - botC.y) * 0.05;
-
-                ctx.save();
-
-                // Mechanical Arm
-                ctx.beginPath();
-                ctx.moveTo(anchorX, anchorY);
-                ctx.lineTo(botC.x, botC.y);
-                ctx.strokeStyle = botC.color + '77';
-                ctx.lineWidth = 5;
-                ctx.stroke();
-
-                // Claw Pincers
-                const isGrabbing = botC.grabState === 'REACHING';
-                const pincerAngle = isGrabbing ? 0.2 : 0.55;
-
-                ctx.beginPath();
-                ctx.arc(botC.x - 6, botC.y, 13, -pincerAngle, pincerAngle);
-                ctx.strokeStyle = botC.color;
-                ctx.lineWidth = 3.5;
-                ctx.shadowColor = botC.color;
-                ctx.shadowBlur = 8;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(botC.x + 6, botC.y, 13, Math.PI - pincerAngle, Math.PI + pincerAngle);
-                ctx.strokeStyle = botC.color;
-                ctx.lineWidth = 3.5;
-                ctx.stroke();
-
-                // Bot Icon Badge
-                ctx.beginPath();
-                ctx.arc(botC.x, botC.y, 12, 0, Math.PI * 2);
-                ctx.fillStyle = botC.color;
-                ctx.fill();
-
-                ctx.font = '11px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(botC.icon, botC.x, botC.y);
-
-                ctx.restore();
-            });
-        }
-
-        /* ===================================================================
-           PARTICLES & CONFETTI ENGINE
-           =================================================================== */
-        function createParticles(x, y, color, count = 20) {
-            for (let i = 0; i < count; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 5 + 2;
-                particles.push({
-                    x, y,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    color: color,
-                    radius: Math.random() * 4 + 2,
-                    alpha: 1,
-                    decay: Math.random() * 0.03 + 0.02
-                });
-            }
-        }
-
-        function updateAndDrawParticles() {
-            for (let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.alpha -= p.decay;
-
+        function updateAndDrawParticles(dt) {
+            for (let i = gameState.particles.length - 1; i >= 0; i--) {
+                const p = gameState.particles[i];
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.alpha -= p.decay * dt;
                 if (p.alpha <= 0) {
-                    particles.splice(i, 1);
+                    gameState.particles.splice(i, 1);
                     continue;
                 }
-
                 ctx.save();
                 ctx.globalAlpha = p.alpha;
                 ctx.fillStyle = p.color;
@@ -1162,136 +1956,286 @@
             }
         }
 
-        let confettiParticles = [];
-        function triggerConfetti() {
-            confettiParticles = [];
-            const colors = ['#06b6d4', '#a855f7', '#ec4899', '#eab308', '#22c55e'];
-            for (let i = 0; i < 90; i++) {
-                confettiParticles.push({
-                    x: Math.random() * confettiCanvas.width,
-                    y: -20,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: Math.random() * 5 + 3,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    size: Math.random() * 8 + 5,
-                    rotation: Math.random() * 360,
-                    rSpeed: (Math.random() - 0.5) * 6
-                });
-            }
-        }
-
-        function updateAndDrawConfetti() {
-            if (confettiParticles.length === 0) return;
-            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-
-            for (let i = confettiParticles.length - 1; i >= 0; i--) {
-                const c = confettiParticles[i];
-                c.x += c.vx;
-                c.y += c.vy;
-                c.rotation += c.rSpeed;
-
-                if (c.y > confettiCanvas.height + 20) {
-                    confettiParticles.splice(i, 1);
+        function updateAndDrawPopups(dt) {
+            for (let i = gameState.popups.length - 1; i >= 0; i--) {
+                const pop = gameState.popups[i];
+                pop.y += pop.vy * dt;
+                pop.vy *= Math.pow(0.25, dt);
+                pop.alpha -= 0.95 * dt;
+                if (pop.alpha <= 0) {
+                    gameState.popups.splice(i, 1);
                     continue;
                 }
 
-                confettiCtx.save();
-                confettiCtx.translate(c.x, c.y);
-                confettiCtx.rotate((c.rotation * Math.PI) / 180);
-                confettiCtx.fillStyle = c.color;
-                confettiCtx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
-                confettiCtx.restore();
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, pop.alpha);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                let offsetY = 0;
+                for (const line of pop.lines) {
+                    ctx.font = `900 ${line.size}px Inter, sans-serif`;
+                    ctx.shadowColor = 'rgba(9, 13, 22, 0.95)';
+                    ctx.shadowBlur = 10;
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = 'rgba(9, 13, 22, 0.9)';
+                    ctx.strokeText(line.text, pop.x, pop.y + offsetY);
+                    ctx.fillStyle = line.color;
+                    ctx.fillText(line.text, pop.x, pop.y + offsetY);
+                    offsetY += line.size + 4;
+                }
+                ctx.restore();
             }
         }
 
-        /* ===================================================================
-           UI UPDATES & TOASTS
-           =================================================================== */
-        function updateScoreboardHUD() {
-            const leaderboardList = document.getElementById('hud-leaderboard-list');
-            
-            const allPlayers = [
-                { name: playerName, score: playerStats.score, isHuman: true, icon: '👤' },
-                ...BOTS_INFO.map(b => ({ name: b.name, score: b.score, isHuman: false, icon: b.icon }))
-            ].sort((a, b) => b.score - a.score);
+        function gameLoop(now) {
+            if (gameState.phase === 'ended' || gameState.phase === 'idle') return;
 
-            leaderboardList.innerHTML = allPlayers.map((p, rank) => `
-                <div class="flex items-center justify-between px-2 py-0.5 rounded-lg ${p.isHuman ? 'bg-purple-900/50 border border-purple-500/40' : 'bg-slate-800/40'}">
-                    <div class="flex items-center gap-1.5 text-xs font-bold overflow-hidden">
-                        <span class="text-[10px] text-slate-400 font-mono w-3">${rank + 1}.</span>
-                        <span>${p.icon}</span>
-                        <span class="${p.isHuman ? 'text-purple-300 font-black' : 'text-slate-300'} truncate max-w-[85px]">${p.name}</span>
-                    </div>
-                    <span class="text-xs font-black font-mono text-cyan-300">${p.score}</span>
-                </div>
-            `).join('');
+            const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+            lastFrameTime = now;
+
+            ctx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0);
+
+            const w = arenaWidth;
+            const h = arenaHeight;
+            drawCosmicGrid(w, h);
+            drawArenaAtmosphere(w, h, now, dt);
+            drawArenaBases(w, h);
+
+            if (gameState.phase === 'countdown') {
+                gameState.countdownRemaining -= dt;
+                const currentStep = Math.ceil(gameState.countdownRemaining / COUNTDOWN_STEP_DURATION);
+                if (currentStep > 0 && currentStep < gameState.lastCountdownStep) {
+                    gameState.lastCountdownStep = currentStep;
+                    soundEngine.countdownTick();
+                }
+
+                if (gameState.countdownRemaining <= 0) {
+                    startNextProblemCycle();
+                } else {
+                    drawCountdownOverlay(w, h);
+                }
+            } else if (gameState.phase === 'playing') {
+                if (gameState.playerCooldown > 0) {
+                    gameState.playerCooldown = Math.max(0, gameState.playerCooldown - dt);
+                }
+
+                if (gameState.mode === 'training') {
+                    gameState.elapsedTime += dt;
+                    updateTimerHUD();
+                } else {
+                    gameState.elapsedTime += dt;
+                    gameState.roundTimeLeft -= dt;
+                    updateTimerHUD();
+                    if (gameState.roundTimeLeft <= 0) {
+                        gameState.roundTimeLeft = 0;
+                        updateTimerHUD(true);
+                        endMatch();
+                        return;
+                    }
+                    updateBotDecisions(dt);
+                }
+
+                updateAndDrawBalls(w, h, dt);
+                updateAndDrawBotClaws(dt);
+                updateAndDrawPlayerHand(dt);
+            }
+
+            updateAndDrawParticles(dt);
+            updateAndDrawPopups(dt);
+
+            animationFrameId = requestAnimationFrame(gameLoop);
         }
 
-        function showToast(text, colorType) {
-            const toast = document.getElementById('arena-toast');
-            const toastText = document.getElementById('toast-text');
-            
-            toastText.textContent = text;
-            toast.classList.remove('opacity-0', '-translate-y-4');
-            toast.classList.add('opacity-100', 'translate-y-0');
+        /* ===================================================================
+           VICTORY CONFETTI EFFECT (DT-BASED & HIDPI)
+           =================================================================== */
+        function startConfetti() {
+            const cCanvas = document.getElementById('confetti-canvas');
+            if (!cCanvas) return;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const logicalW = window.innerWidth;
+            const logicalH = window.innerHeight;
+            cCanvas.width = Math.round(logicalW * dpr);
+            cCanvas.height = Math.round(logicalH * dpr);
+            const cCtx = cCanvas.getContext('2d');
 
-            clearTimeout(toast.timer);
-            toast.timer = setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', '-translate-y-4');
-            }, 1800);
+            const colors = ['#a855f7', '#06b6d4', '#ec4899', '#eab308', '#22c55e'];
+            const pieces = Array.from({ length: 90 }, () => ({
+                x: Math.random() * logicalW,
+                y: Math.random() * -logicalH,
+                w: 7 + Math.random() * 6,
+                h: 10 + Math.random() * 8,
+                vy: (2.5 + Math.random() * 3.5) * 60,
+                vx: (-1.5 + Math.random() * 3) * 60,
+                rot: Math.random() * 360,
+                vRot: (-4 + Math.random() * 8) * 60,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            }));
+
+            let lastConfettiTime = performance.now();
+
+            function renderConfetti(now) {
+                const dt = Math.min(0.1, (now - lastConfettiTime) / 1000);
+                lastConfettiTime = now;
+
+                cCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                cCtx.clearRect(0, 0, logicalW, logicalH);
+
+                let activeCount = 0;
+                for (const p of pieces) {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.rot += p.vRot * dt;
+                    if (p.y < logicalH + 20) activeCount++;
+
+                    cCtx.save();
+                    cCtx.translate(p.x, p.y);
+                    cCtx.rotate((p.rot * Math.PI) / 180);
+                    cCtx.fillStyle = p.color;
+                    cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    cCtx.restore();
+                }
+
+                if (activeCount > 0) {
+                    confettiAnimationId = requestAnimationFrame(renderConfetti);
+                } else {
+                    cCtx.clearRect(0, 0, logicalW, logicalH);
+                }
+            }
+
+            confettiAnimationId = requestAnimationFrame(renderConfetti);
         }
 
         /* ===================================================================
-           END OF MATCH & PODIUM SCREEN
+           UI EVENT LISTENERS & INITIALIZATION
            =================================================================== */
-        function endMatch() {
-            matchActive = false;
-            currentPhase = 'NONE';
-            clearInterval(mainTimerInterval);
-            clearInterval(previewTimerInterval);
-            botDecisionTimers.forEach(t => clearTimeout(t));
+        document.addEventListener('DOMContentLoaded', () => {
+            syncViewportLayout();
 
-            const standings = [
-                { name: playerName, score: playerStats.score, isHuman: true, icon: '👤' },
-                ...BOTS_INFO.map(b => ({ name: b.name, score: b.score, isHuman: false, icon: b.icon }))
-            ].sort((a, b) => b.score - a.score);
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    soundEngine.init();
+                    soundEngine.tick();
+                    applyModeUI(tab.dataset.mode);
+                });
+            });
 
-            const humanRank = standings.findIndex(p => p.isHuman) + 1;
+            const opButtons = document.querySelectorAll('.btn-op');
+            opButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    soundEngine.init();
+                    soundEngine.tick();
+                    selectedOperation = btn.dataset.op;
 
-            const podiumList = document.getElementById('results-podium-list');
-            const medalEmojis = ['🥇', '🥈', '🥉', '4️⃣'];
+                    opButtons.forEach(b => {
+                        b.classList.remove(
+                            'border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40',
+                            'border-pink-400', 'bg-pink-950/40', 'ring-pink-400/40',
+                            'border-purple-400', 'bg-purple-950/40', 'ring-purple-400/40',
+                            'border-amber-400', 'bg-amber-950/40', 'ring-amber-400/40'
+                        );
+                        b.classList.add('border-slate-700');
+                        const labelEl = b.querySelector('span:last-child');
+                        if (labelEl) {
+                            labelEl.classList.remove('text-white');
+                            labelEl.classList.add('text-slate-200');
+                        }
+                    });
 
-            podiumList.innerHTML = standings.map((p, idx) => `
-                <div class="flex items-center justify-between p-3 rounded-xl ${p.isHuman ? 'bg-gradient-to-r from-purple-900/60 to-indigo-900/60 border border-purple-400/50 shadow-md' : 'bg-slate-800/50'}">
-                    <div class="flex items-center gap-3">
-                        <span class="text-xl">${medalEmojis[idx]}</span>
-                        <span class="text-lg">${p.icon}</span>
-                        <span class="font-extrabold text-sm sm:text-base ${p.isHuman ? 'text-purple-300' : 'text-slate-200'}">${p.name} ${p.isHuman ? '(ВЫ)' : ''}</span>
-                    </div>
-                    <span class="text-xl font-black font-mono text-cyan-300">${p.score} б.</span>
-                </div>
-            `).join('');
+                    btn.classList.remove('border-slate-700');
+                    const activeLabel = btn.querySelector('span:last-child');
+                    if (activeLabel) {
+                        activeLabel.classList.remove('text-slate-200');
+                        activeLabel.classList.add('text-white');
+                    }
 
-            document.getElementById('stat-grabs').textContent = playerStats.correctGrabs;
-            
-            const totalAttempts = playerStats.correctGrabs + playerStats.wrongGrabs;
-            const accuracy = totalAttempts > 0 ? Math.round((playerStats.correctGrabs / totalAttempts) * 100) : 100;
-            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
-            document.getElementById('stat-total-score').textContent = playerStats.score;
+                    if (selectedOperation === 'add') {
+                        btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
+                    } else if (selectedOperation === 'sub') {
+                        btn.classList.add('border-pink-400', 'bg-pink-950/40', 'ring-2', 'ring-pink-400/40');
+                    } else if (selectedOperation === 'mul') {
+                        btn.classList.add('border-purple-400', 'bg-purple-950/40', 'ring-2', 'ring-purple-400/40');
+                    } else {
+                        btn.classList.add('border-amber-400', 'bg-amber-950/40', 'ring-2', 'ring-amber-400/40');
+                    }
 
-            const subtitle = document.getElementById('results-subtitle');
-            if (humanRank === 1) {
-                subtitle.textContent = '🎉 Невероятно! Ты занял 1-е место на математической арене!';
-                triggerConfetti();
-                soundEngine.fanfare();
-            } else {
-                subtitle.textContent = `Ты занял ${humanRank}-е место. Попробуй ещё раз, чтобы занять 1 место!`;
+                    updateDifficultyDescriptions();
+                });
+            });
+
+            const diffButtons = document.querySelectorAll('.btn-diff');
+            diffButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    soundEngine.init();
+                    soundEngine.tick();
+                    selectedDifficulty = btn.dataset.diff;
+
+                    diffButtons.forEach(b => {
+                        b.classList.remove(
+                            'border-emerald-400', 'bg-emerald-950/40', 'ring-2', 'ring-emerald-400/40',
+                            'border-cyan-400', 'bg-cyan-950/40', 'ring-cyan-400/40',
+                            'border-purple-400', 'bg-purple-950/40', 'ring-purple-400/40'
+                        );
+                        b.classList.add('border-slate-700');
+                    });
+
+                    btn.classList.remove('border-slate-700');
+                    if (selectedDifficulty === 'easy') {
+                        btn.classList.add('border-emerald-400', 'bg-emerald-950/40', 'ring-2', 'ring-emerald-400/40');
+                    } else if (selectedDifficulty === 'medium') {
+                        btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
+                    } else {
+                        btn.classList.add('border-purple-400', 'bg-purple-950/40', 'ring-2', 'ring-purple-400/40');
+                    }
+                });
+            });
+
+            document.getElementById('btn-sound').addEventListener('click', () => {
+                soundEngine.enabled = !soundEngine.enabled;
+                if (soundEngine.enabled) {
+                    soundEngine.init();
+                    soundEngine.tick();
+                }
+                const icon = document.getElementById('sound-icon');
+                const text = document.getElementById('sound-text');
+                if (soundEngine.enabled) {
+                    icon.className = 'fa-solid fa-volume-high text-cyan-400';
+                    text.textContent = 'Звук вкл';
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                    text.textContent = 'Звук выкл';
+                }
+            });
+
+            document.getElementById('btn-start-game').addEventListener('click', () => {
+                soundEngine.init();
                 soundEngine.tick();
-            }
+                startMatch();
+            });
 
-            showScreen('screen-results');
-        }
+            btnExitMenu.addEventListener('click', () => {
+                soundEngine.tick();
+                if (gameState.mode === 'training' && gameState.phase === 'playing') {
+                    endMatch();
+                } else {
+                    exitToMenu();
+                }
+            });
+
+            document.getElementById('btn-replay').addEventListener('click', () => {
+                soundEngine.init();
+                soundEngine.tick();
+                startMatch();
+            });
+
+            document.getElementById('btn-change-diff').addEventListener('click', () => {
+                soundEngine.tick();
+                exitToMenu();
+            });
+
+            updateDifficultyDescriptions();
+        });
     </script>
 </body>
 </html>
