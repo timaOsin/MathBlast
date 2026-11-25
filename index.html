@@ -8,8 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Inter & JetBrains Mono Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -17,10 +17,11 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
                         space: {
-                            900: '#090d16',
+                            900: '#070d19',
                             800: '#0f172a',
                             700: '#1e293b',
                             card: 'rgba(30, 41, 59, 0.75)',
@@ -35,24 +36,24 @@
                         }
                     },
                     animation: {
-                        'pulse-glow': 'pulseGlow 2s infinite',
-                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
-                        'problem-swap': 'problemSwap 0.42s cubic-bezier(0.22, 1, 0.36, 1) both',
+                        'pulse-glow': 'pulseGlow 2.4s infinite',
+                        'shake': 'shake 0.35s cubic-bezier(.36,.07,.19,.97) both',
+                        'problem-swap': 'problemSwap 0.38s cubic-bezier(0.22, 1, 0.36, 1) both',
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)' },
-                            '50%': { boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' },
+                            '0%, 100%': { boxShadow: '0 0 14px rgba(6, 182, 212, 0.35)' },
+                            '50%': { boxShadow: '0 0 26px rgba(168, 85, 247, 0.7)' },
                         },
                         shake: {
                             '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
                             '20%, 80%': { transform: 'translate3d(4px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-6px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(6px, 0, 0)' }
+                            '30%, 50%, 70%': { transform: 'translate3d(-5px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(5px, 0, 0)' }
                         },
                         problemSwap: {
-                            '0%': { opacity: '0', transform: 'translateY(-14px) scale(0.75)', filter: 'brightness(2)' },
-                            '55%': { opacity: '1', transform: 'translateY(3px) scale(1.12)', filter: 'brightness(1.4)' },
+                            '0%': { opacity: '0', transform: 'translateY(-14px) scale(0.84)', filter: 'brightness(1.7)' },
+                            '60%': { opacity: '1', transform: 'translateY(2px) scale(1.06)', filter: 'brightness(1.2)' },
                             '100%': { opacity: '1', transform: 'translateY(0) scale(1)', filter: 'brightness(1)' }
                         }
                     }
@@ -62,19 +63,18 @@
     </script>
     <style>
         body {
-            background-color: #090d16;
+            background-color: #070d19;
             color: #f8fafc;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            overflow-x: hidden;
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.86);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.16);
         }
 
         .glass-card {
@@ -97,19 +97,51 @@
             display: block;
             touch-action: none;
         }
+
+        /* Mathematical Blueprint Background Pattern */
+        .math-grid-bg {
+            background-color: #070d19;
+            background-image:
+                linear-gradient(to right, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+                linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+            background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px;
+        }
+
+        .math-formula-float {
+            font-family: 'JetBrains Mono', monospace;
+            user-select: none;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body id="app-body" class="min-h-[100dvh] flex flex-col font-sans antialiased text-white relative bg-gradient-to-br from-space-900 via-slate-900 to-indigo-950">
+<body id="app-body" class="min-h-[100dvh] flex flex-col font-sans antialiased text-white relative math-grid-bg">
+
+    <!-- Floating Ambient Math Symbols & Formulas Layer -->
+    <div id="math-ambient-layer" class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-35">
+        <span class="math-formula-float absolute top-[11%] left-[5%] text-cyan-400/30 text-lg sm:text-2xl font-extrabold -rotate-12">∑ xₙ = ∞</span>
+        <span class="math-formula-float absolute top-[16%] right-[7%] text-purple-400/30 text-xl sm:text-3xl font-extrabold rotate-12">π ≈ 3.14159</span>
+        <span class="math-formula-float absolute top-[44%] left-[3%] text-emerald-400/25 text-base sm:text-xl font-bold rotate-6">a² + b² = c²</span>
+        <span class="math-formula-float absolute top-[52%] right-[4%] text-amber-400/25 text-lg sm:text-2xl font-bold -rotate-6">∫ f(x)dx</span>
+        <span class="math-formula-float absolute bottom-[12%] left-[8%] text-pink-400/25 text-xl sm:text-3xl font-extrabold rotate-12">√(x² + y²)</span>
+        <span class="math-formula-float absolute bottom-[9%] right-[9%] text-cyan-300/30 text-lg sm:text-2xl font-extrabold -rotate-12">Δ = b² − 4ac</span>
+        <span class="math-formula-float absolute top-[28%] left-[18%] text-slate-400/20 text-sm sm:text-lg font-bold">∀x ∈ ℝ</span>
+        <span class="math-formula-float absolute bottom-[26%] right-[19%] text-slate-400/20 text-sm sm:text-lg font-bold">lim x→∞</span>
+    </div>
 
     <!-- Top Fixed Navigation Bar -->
-    <header class="w-full shrink-0 px-3 sm:px-4 py-2.5 border-b border-slate-800/80 bg-space-900/90 backdrop-blur-md flex items-center justify-between z-30 shadow-md">
+    <header class="w-full shrink-0 px-3 sm:px-4 py-2.5 border-b border-cyan-500/20 bg-space-900/90 backdrop-blur-md flex items-center justify-between z-30 shadow-md">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <i class="fa-solid fa-bolt text-xl text-white"></i>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 border border-cyan-300/40 flex items-center justify-center shadow-lg shadow-cyan-500/30 font-mono font-black text-xl text-white">
+                ∑
             </div>
             <div>
-                <h1 class="font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">MATH BLAST</h1>
-                <p class="text-xs text-slate-400 hidden sm:block">Математическая аркадная арена</p>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400">MATH BLAST</h1>
+                    <span class="hidden sm:inline-block font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-950/90 border border-cyan-400/40 text-cyan-300">f(x)</span>
+                </div>
+                <p class="text-xs text-slate-400 hidden sm:block font-mono">Координатная математическая арена</p>
             </div>
         </div>
 
@@ -128,37 +160,85 @@
     <!-- Main Content Container -->
     <main id="main-container" class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col justify-center items-center relative z-10">
 
-        <!-- ================= SCREEN 1: START & DIFFICULTY SELECTION ================= -->
-        <section id="screen-start" class="w-full max-w-xl glass-panel rounded-3xl p-5 sm:p-7 shadow-2xl border border-purple-500/20 text-center my-auto">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 mb-3 text-[11px] font-bold tracking-widest uppercase">
-                <span>🔥</span>
-                <span>Математическая аркадная арена</span>
+        <!-- ================= SCREEN 0: WELCOME & AVATAR SELECTION ================= -->
+        <section id="screen-welcome" class="w-full max-w-md glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-cyan-400/30 text-center my-auto relative overflow-hidden">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/35 text-cyan-300 mb-4 text-[11px] font-mono font-bold tracking-widest uppercase">
+                <span>π</span>
+                <span>• Математическая арена •</span>
+                <span>∞</span>
             </div>
-            <h2 class="text-2xl sm:text-4xl font-black mb-4 glow-text-purple">Поймай верный шар!</h2>
 
-            <!-- Mode Tabs (Survival vs Nightmare vs Training) -->
+            <!-- Selected Avatar Preview -->
+            <div class="relative w-24 h-24 mx-auto mb-4 rounded-3xl bg-gradient-to-tr from-cyan-600/25 via-blue-600/20 to-purple-600/30 border-2 border-cyan-400/75 shadow-xl shadow-cyan-500/25 flex items-center justify-center">
+                <span id="welcome-avatar-preview" class="text-5xl select-none transition-transform duration-200">⚡</span>
+                <span class="absolute -bottom-2 px-2.5 py-0.5 rounded-full bg-slate-900 border border-cyan-400/60 font-mono text-[10px] font-extrabold text-cyan-300 uppercase tracking-wider">Игрок [x]</span>
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-black mb-1.5 glow-text-cyan tracking-tight">MATH BLAST</h2>
+            <p class="text-slate-300 text-xs sm:text-sm mb-6">Выберите эмодзи-аватарку для своего профиля и вступайте в математическую битву!</p>
+
+            <!-- Emoji Avatar Picker Grid -->
+            <div class="mb-7">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Выберите аватарку</label>
+                <div id="avatar-picker-grid" class="grid grid-cols-5 gap-2 max-w-xs mx-auto">
+                    <button type="button" data-avatar="⚡" class="btn-avatar h-12 rounded-2xl bg-cyan-950/60 border-2 border-cyan-400 ring-2 ring-cyan-400/40 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">⚡</button>
+                    <button type="button" data-avatar="🚀" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🚀</button>
+                    <button type="button" data-avatar="🦁" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🦁</button>
+                    <button type="button" data-avatar="🐉" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🐉</button>
+                    <button type="button" data-avatar="🥷" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🥷</button>
+                    <button type="button" data-avatar="🦄" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🦄</button>
+                    <button type="button" data-avatar="👽" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">👽</button>
+                    <button type="button" data-avatar="🐼" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🐼</button>
+                    <button type="button" data-avatar="🔥" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">🔥</button>
+                    <button type="button" data-avatar="👑" class="btn-avatar h-12 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-purple-400 text-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95">👑</button>
+                </div>
+            </div>
+
+            <!-- Proceed to Mode Setup Button -->
+            <button id="btn-welcome-play" type="button" class="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-black text-lg sm:text-xl tracking-wider shadow-lg shadow-purple-500/40 hover:shadow-purple-500/60 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto animate-pulse-glow">
+                <i class="fa-solid fa-play"></i>
+                <span>НАЧАТЬ ИГРАТЬ</span>
+            </button>
+        </section>
+
+        <!-- ================= SCREEN 1: START & DIFFICULTY SELECTION ================= -->
+        <section id="screen-start" class="w-full max-w-xl glass-panel rounded-3xl p-5 sm:p-7 shadow-2xl border border-cyan-400/25 text-center my-auto hidden">
+            <div class="flex items-center justify-between gap-2 mb-3">
+                <button id="btn-back-welcome" type="button" class="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95">
+                    <i class="fa-solid fa-arrow-left text-cyan-400"></i>
+                    <span>Аватар: <span id="setup-avatar-badge" class="text-sm">⚡</span></span>
+                </button>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 font-mono text-[11px] font-bold tracking-widest uppercase">
+                    <span>∑</span>
+                    <span>Параметры задачи</span>
+                </div>
+                <div class="w-16 hidden sm:block"></div>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-black mb-4 glow-text-cyan">Вычисли и поймай шар!</h2>
+
+            <!-- Mode Tabs (Survival vs Training vs Nightmare) -->
             <div class="max-w-md mx-auto mb-4 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-700/80 grid grid-cols-3 gap-1.5">
-                <button id="tab-survival" type="button" data-mode="survival" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 text-white shadow-md border border-purple-400/40">
+                <button id="tab-survival" type="button" data-mode="survival" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent">
                     <span>🔥</span>
                     <span>Выживание</span>
+                </button>
+                <button id="tab-training" type="button" data-mode="training" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-purple-600/80 to-cyan-600/80 text-white shadow-md border border-purple-400/40">
+                    <span>🎯</span>
+                    <span>Тренировка</span>
                 </button>
                 <button id="tab-nightmare" type="button" data-mode="nightmare" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent">
                     <span>💀</span>
                     <span>Кошмар</span>
-                </button>
-                <button id="tab-training" type="button" data-mode="training" class="mode-tab py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent">
-                    <span>🎯</span>
-                    <span>Тренировка</span>
                 </button>
             </div>
 
             <!-- Compact Rule Chips -->
             <div id="mode-chips" class="max-w-md mx-auto mb-5 flex flex-wrap items-center justify-center gap-2 text-xs font-bold">
                 <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
-                    <i class="fa-solid fa-clock"></i> 15 сек старт
+                    <i class="fa-solid fa-clock"></i> 20 сек раунд
                 </span>
                 <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
-                    <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                    <i class="fa-solid fa-bolt"></i> На скорость счёта
                 </span>
                 <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
                     <i class="fa-solid fa-robot"></i> 3 соперника
@@ -167,22 +247,22 @@
 
             <!-- Math Operation Selector (Addition / Subtraction / Multiplication / Division) -->
             <div class="mb-4">
-                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Выберите действие</label>
+                <label class="block font-mono text-[11px] font-bold text-cyan-300/80 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Выберите действие [ + − × ÷ ]</label>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-md mx-auto">
                     <button type="button" data-op="add" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-cyan-400 bg-cyan-950/40 ring-2 ring-cyan-400/40 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
-                        <span class="text-base font-black text-cyan-300">➕</span>
+                        <span class="font-mono text-xl font-black text-cyan-300 leading-none">+</span>
                         <span class="text-xs font-extrabold text-white">Сложение</span>
                     </button>
                     <button type="button" data-op="sub" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-pink-400 hover:bg-pink-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
-                        <span class="text-base font-black text-pink-400">➖</span>
+                        <span class="font-mono text-xl font-black text-pink-400 leading-none">−</span>
                         <span class="text-xs font-extrabold text-slate-200">Вычитание</span>
                     </button>
                     <button type="button" data-op="mul" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-purple-400 hover:bg-purple-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
-                        <span class="text-base font-black text-purple-400">✖️</span>
+                        <span class="font-mono text-xl font-black text-purple-400 leading-none">×</span>
                         <span class="text-xs font-extrabold text-slate-200">Умножение</span>
                     </button>
                     <button type="button" data-op="div" class="btn-op glass-card rounded-2xl py-2.5 px-2 text-center border-2 border-slate-700 hover:border-amber-400 hover:bg-amber-950/30 transition-all cursor-pointer flex flex-col items-center gap-1 active:scale-95">
-                        <span class="text-base font-black text-amber-400">➗</span>
+                        <span class="font-mono text-xl font-black text-amber-400 leading-none">÷</span>
                         <span class="text-xs font-extrabold text-slate-200">Деление</span>
                     </button>
                 </div>
@@ -190,14 +270,14 @@
 
             <!-- Difficulty Cards -->
             <div id="difficulty-section" class="mb-6">
-                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Выберите уровень сложности</label>
+                <label class="block font-mono text-[11px] font-bold text-cyan-300/80 uppercase tracking-wider mb-2 text-left max-w-md mx-auto">Уровень сложности [ 1 — 3 ]</label>
                 <div class="grid grid-cols-3 gap-2.5 max-w-md mx-auto">
                     
                     <!-- Easy Card -->
                     <button type="button" data-diff="easy" class="btn-diff glass-card rounded-2xl p-3 text-left border-2 border-slate-700 hover:border-emerald-400 hover:bg-emerald-950/30 transition-all cursor-pointer relative active:scale-95">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                             <span class="font-extrabold text-emerald-400 text-xs sm:text-sm">ЛЁГКИЙ</span>
-                            <span id="badge-diff-easy" class="self-start bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
+                            <span id="badge-diff-easy" class="self-start bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+1б</span>
                         </div>
                         <p id="desc-diff-easy" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 20</p>
                     </button>
@@ -206,9 +286,9 @@
                     <button type="button" data-diff="medium" class="btn-diff glass-card rounded-2xl p-3 text-left border-2 border-cyan-400 bg-cyan-950/40 transition-all cursor-pointer relative ring-2 ring-cyan-400/40 active:scale-95">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                             <span class="font-extrabold text-cyan-300 text-xs sm:text-sm">СРЕДНИЙ</span>
-                            <span id="badge-diff-medium" class="self-start bg-cyan-500/20 text-cyan-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
+                            <span id="badge-diff-medium" class="self-start bg-cyan-500/20 text-cyan-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+2б</span>
                         </div>
-                        <p id="desc-diff-medium" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 50</p>
+                        <p id="desc-diff-medium" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 30</p>
                     </button>
 
                     <!-- Hard Card -->
@@ -217,7 +297,7 @@
                             <span class="font-extrabold text-purple-400 text-xs sm:text-sm">СЛОЖНЫЙ</span>
                             <span id="badge-diff-hard" class="self-start bg-purple-500/20 text-purple-300 text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold">+3б</span>
                         </div>
-                        <p id="desc-diff-hard" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 100</p>
+                        <p id="desc-diff-hard" class="text-[11px] sm:text-xs text-slate-300 leading-snug">Сложение до 50</p>
                     </button>
 
                 </div>
@@ -231,7 +311,7 @@
                     </span>
                     <span class="bg-rose-500/25 border border-rose-400/40 text-rose-200 text-xs px-2.5 py-0.5 rounded-full font-black">+4 б.</span>
                 </div>
-                <p id="desc-diff-nightmare" class="text-xs text-rose-200/90">Сложение до 100 • Сверхбыстрые боты и шары</p>
+                <p id="desc-diff-nightmare" class="text-xs text-rose-200/90">Сложение до 50 • Сверхбыстрые боты и шары</p>
             </div>
 
             <!-- Start Game Button -->
@@ -251,11 +331,14 @@
                 <div id="hud-match-info" class="lg:col-span-3 glass-panel rounded-2xl p-2 sm:p-2.5 flex items-center justify-between gap-2 sm:gap-3 border border-slate-700">
                     
                     <!-- Round Timer -->
-                    <div class="shrink-0 flex items-center gap-2 sm:gap-3 bg-slate-900/90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-700">
+                    <div id="hud-timer-box" class="relative overflow-hidden shrink-0 flex items-center gap-2 sm:gap-3 bg-slate-900/90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-700">
                         <i class="fa-solid fa-clock text-amber-400 text-lg sm:text-xl animate-pulse"></i>
                         <div>
                             <div id="hud-timer-label" class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap">До конца</div>
-                            <div id="hud-timer" class="text-lg sm:text-2xl font-black text-amber-300 tracking-tight font-mono whitespace-nowrap">15.0 с</div>
+                            <div id="hud-timer" class="text-lg sm:text-2xl font-black text-amber-300 tracking-tight font-mono whitespace-nowrap">20.0 с</div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-800/90">
+                            <div id="hud-timer-bar" class="h-full bg-emerald-400 transition-all duration-100 ease-linear" style="width: 100%"></div>
                         </div>
                     </div>
 
@@ -264,12 +347,16 @@
                         <div id="hud-problem-flash" class="pointer-events-none absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-300/35 to-purple-400/0 opacity-0 transition-opacity duration-300"></div>
                         <span class="hidden sm:inline text-xs sm:text-sm text-purple-200 uppercase font-extrabold mr-2.5 tracking-wider">Пример:</span>
                         <span id="hud-problem" class="inline-block text-xl sm:text-3xl md:text-4xl font-black tracking-wider text-cyan-300 glow-text-cyan font-mono whitespace-nowrap">Приготовьтесь...</span>
+                        <div id="hud-streak-badge" class="hidden ml-2 sm:ml-3 px-2 py-0.5 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 text-xs sm:text-sm font-black tracking-tight items-center gap-1 shadow-sm shadow-amber-500/20 whitespace-nowrap">
+                            <span>🔥</span>
+                            <span id="hud-streak-count">x2</span>
+                        </div>
                     </div>
 
                     <!-- Points Reward Tag / Solved Counter in Training -->
                     <div class="shrink-0 bg-indigo-900/60 border border-indigo-500/30 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-center min-w-[68px] sm:min-w-[82px]">
                         <div id="hud-reward-label" class="text-[9px] sm:text-[10px] text-indigo-300 font-bold uppercase">Награда</div>
-                        <div id="hud-points-per-ball" class="text-base sm:text-lg font-extrabold text-emerald-400 whitespace-nowrap">+3 б.</div>
+                        <div id="hud-points-per-ball" class="text-base sm:text-lg font-extrabold text-emerald-400 whitespace-nowrap">+2 б.</div>
                     </div>
                 </div>
 
@@ -317,8 +404,8 @@
             <!-- Player Match Stats Grid -->
             <div class="grid grid-cols-3 gap-3 mb-8">
                 <div class="glass-card p-3 rounded-2xl border border-slate-700">
-                    <div id="stat-grabs-label" class="text-[11px] text-slate-400 font-bold uppercase">Время выживания</div>
-                    <div id="stat-grabs" class="text-2xl font-black text-cyan-400">0.0 с</div>
+                    <div id="stat-grabs-label" class="text-[11px] text-slate-400 font-bold uppercase">Поймано шаров</div>
+                    <div id="stat-grabs" class="text-2xl font-black text-cyan-400">0</div>
                 </div>
                 <div class="glass-card p-3 rounded-2xl border border-slate-700">
                     <div class="text-[11px] text-slate-400 font-bold uppercase">Точность</div>
@@ -445,16 +532,16 @@
             hard: {
                 name: 'СЛОЖНЫЙ',
                 points: 3,
-                botMinDelay: 1.4,
-                botMaxDelay: 2.7,
-                botErrorChance: 0.07
+                botMinDelay: 2.5,
+                botMaxDelay: 4.5,
+                botErrorChance: 0.16
             },
             nightmare: {
                 name: 'КОШМАР',
                 points: 4,
-                botMinDelay: 1.5,
-                botMaxDelay: 2.8,
-                botErrorChance: 0.08
+                botMinDelay: 2.6,
+                botMaxDelay: 4.6,
+                botErrorChance: 0.18
             }
         };
 
@@ -462,33 +549,32 @@
             add: {
                 name: 'Сложение',
                 easy: 'Сложение до 20',
-                medium: 'Сложение до 50',
-                hard: 'Сложение до 100'
+                medium: 'Сложение до 30',
+                hard: 'Сложение до 50'
             },
             sub: {
                 name: 'Вычитание',
                 easy: 'Вычитание до 20',
-                medium: 'Вычитание до 50',
-                hard: 'Вычитание до 100'
+                medium: 'Вычитание до 30',
+                hard: 'Вычитание до 50'
             },
             mul: {
                 name: 'Умножение',
                 easy: 'Таблица на 2–5',
-                medium: 'Таблица до 10×10',
-                hard: 'Умножение до 19×9'
+                medium: 'Таблица на 2–7',
+                hard: 'Таблица до 10×10'
             },
             div: {
                 name: 'Деление',
                 easy: 'Деление на 2–5',
-                medium: 'Таблица деления до 100',
-                hard: 'Деление до 171÷9'
+                medium: 'Деление на 2–7',
+                hard: 'Таблица деления до 100'
             }
         };
 
         function getPointsPerAnswer(mode = selectedMode, op = selectedOperation, diff = selectedDifficulty) {
             if (mode === 'training') return 0;
             if (mode === 'nightmare') return 4;
-            if (op === 'add' || op === 'sub') return 3;
             return DIFFICULTY_CONFIG[diff].points;
         }
 
@@ -512,15 +598,19 @@
             { fill: '#0d9488', glow: '#14b8a6', border: '#99f6e4' }
         ];
 
-        const SURVIVAL_START_TIME = 15.0;
-        const SURVIVAL_TIME_BONUS = 3.0;
-        const SURVIVAL_MAX_TIME = 30.0;
+        const SURVIVAL_DURATION = 20.0;
+        const TRAINING_DURATION = 30.0;
         const COUNTDOWN_STEP_DURATION = 0.55;
         const PLAYER_COOLDOWN_DURATION = 0.5;
 
-        let selectedMode = 'survival'; // 'survival' | 'nightmare' | 'training'
+        function getModeRoundDuration(mode = selectedMode) {
+            return mode === 'training' ? TRAINING_DURATION : SURVIVAL_DURATION;
+        }
+
+        let selectedMode = 'training'; // 'survival' | 'nightmare' | 'training'
         let selectedOperation = 'add'; // 'add' | 'sub' | 'mul' | 'div'
         let selectedDifficulty = 'medium';
+        let playerAvatar = '⚡';
         const playerName = 'Вы';
 
         let arenaWidth = 640;
@@ -531,25 +621,36 @@
         let lastTimerUrgent = null;
 
         let gameState = {
-            mode: 'survival',
+            mode: 'training',
+            operation: 'add',
+            effectiveDiff: 'medium',
             phase: 'idle', // 'idle' | 'countdown' | 'playing' | 'ended'
             countdownRemaining: 0,
             lastCountdownStep: 0,
-            roundTimeLeft: SURVIVAL_START_TIME,
-            elapsedTime: 0,
+            roundTimeLeft: TRAINING_DURATION,
             solvedCount: 0,
+            streak: 0,
             currentProblem: null,
             balls: [],
             particles: [],
-            popups: [],
+            floatingTexts: [],
             shockwaves: [],
-            wrongFlashAlpha: 0,
+            wrongVignetteAlpha: 0,
             playerScore: 0,
             playerGrabs: 0,
             playerClicks: 0,
             playerCooldown: 0,
             bots: []
         };
+
+        let bgStars = Array.from({ length: 42 }, () => ({
+            rx: Math.random(),
+            ry: Math.random(),
+            size: 0.9 + Math.random() * 1.9,
+            speed: 0.008 + Math.random() * 0.022,
+            phase: Math.random() * Math.PI * 2,
+            tint: Math.random() > 0.5 ? '#38bdf8' : '#c084fc'
+        }));
 
         let playerHand = {
             active: false,
@@ -570,10 +671,12 @@
         let animationFrameId = null;
         let lastFrameTime = 0;
         let toastTimeoutId = null;
-        let problemSwapTimeoutId = null;
         let confettiAnimationId = null;
 
         // DOM Elements
+        const appBody = document.getElementById('app-body');
+        const mainContainer = document.getElementById('main-container');
+        const screenWelcome = document.getElementById('screen-welcome');
         const screenStart = document.getElementById('screen-start');
         const screenGame = document.getElementById('screen-game');
         const screenResults = document.getElementById('screen-results');
@@ -583,39 +686,36 @@
         const ctx = canvas.getContext('2d');
 
         /* ===================================================================
-           HIGH-DPI CANVAS RESIZING & ZOOM/RESIZE HANDLING
+           FULL-VIEWPORT & HIGH-DPI CANVAS RESIZING
            =================================================================== */
         function syncViewportLayout() {
-            const appBody = document.getElementById('app-body');
-            const mainContainer = document.getElementById('main-container');
             const isPlayingScreen = !screenGame.classList.contains('hidden');
-
-            const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-            if (appBody) {
-                appBody.style.minHeight = `${Math.round(vh)}px`;
-            }
-
             if (isPlayingScreen) {
+                appBody.classList.remove('min-h-[100dvh]');
                 appBody.classList.add('h-[100dvh]', 'overflow-hidden');
-                mainContainer.classList.remove('max-w-5xl');
-                mainContainer.classList.add('max-w-none', 'h-full', 'min-h-0');
+                mainContainer.classList.remove('max-w-5xl', 'p-3', 'sm:p-5', 'justify-center');
+                mainContainer.classList.add('max-w-none', 'p-1.5', 'sm:p-2.5', 'justify-start', 'min-h-0', 'overflow-hidden');
             } else {
+                appBody.classList.add('min-h-[100dvh]');
                 appBody.classList.remove('h-[100dvh]', 'overflow-hidden');
-                mainContainer.classList.remove('max-w-none', 'h-full', 'min-h-0');
-                mainContainer.classList.add('max-w-5xl');
+                mainContainer.classList.add('max-w-5xl', 'p-3', 'sm:p-5', 'justify-center');
+                mainContainer.classList.remove('max-w-none', 'p-1.5', 'sm:p-2.5', 'justify-start', 'min-h-0', 'overflow-hidden');
             }
+            resizeCanvas();
         }
 
         function resizeCanvas() {
-            syncViewportLayout();
             if (!canvasContainer || !canvas) return;
             const rect = canvasContainer.getBoundingClientRect();
-            const logicalW = Math.max(120, Math.round(rect.width || 640));
-            const logicalH = Math.max(120, Math.round(rect.height || 420));
+            const logicalW = Math.round(rect.width > 50 ? rect.width : 640);
+            const logicalH = Math.round(rect.height > 50 ? rect.height : 420);
             const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
             const targetPixelW = Math.round(logicalW * dpr);
             const targetPixelH = Math.round(logicalH * dpr);
+
+            const prevW = arenaWidth;
+            const prevH = arenaHeight;
 
             arenaWidth = logicalW;
             arenaHeight = logicalH;
@@ -625,12 +725,15 @@
                 canvas.width = targetPixelW;
                 canvas.height = targetPixelH;
 
-                const targetRadius = Math.max(20, Math.min(36, Math.min(arenaWidth, arenaHeight) * 0.072));
+                const newRadius = Math.max(22, Math.min(38, Math.min(arenaWidth, arenaHeight) * 0.068));
+
                 for (const b of gameState.balls) {
-                    b.radius = targetRadius;
                     if (!b.grabbed) {
-                        b.x = Math.max(b.radius + 10, Math.min(arenaWidth - b.radius - 10, b.x));
-                        b.y = Math.max(b.radius + 10, Math.min(arenaHeight - b.radius - 10, b.y));
+                        const relX = prevW > 0 ? b.x / prevW : 0.5;
+                        const relY = prevH > 0 ? b.y / prevH : 0.5;
+                        b.radius = newRadius;
+                        b.x = Math.max(b.radius + 10, Math.min(arenaWidth - b.radius - 10, relX * arenaWidth));
+                        b.y = Math.max(b.radius + 10, Math.min(arenaHeight - b.radius - 10, relY * arenaHeight));
                     }
                 }
             }
@@ -648,13 +751,13 @@
         }
 
         /* ===================================================================
-           MATH PROBLEM GENERATOR
+           MATH PROBLEM GENERATOR (OPERATION + DIFFICULTY)
            =================================================================== */
         function randInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function generateMathProblem(op, diff) {
+        function generateMathProblem(diff, op = selectedOperation) {
             let text = '';
             let answer = 0;
 
@@ -665,13 +768,13 @@
                     answer = a + b;
                     text = `${a} + ${b} = ?`;
                 } else if (diff === 'medium') {
-                    const a = randInt(8, 35);
-                    const b = randInt(5, 50 - a);
+                    const a = randInt(4, 22);
+                    const b = randInt(3, 30 - a);
                     answer = a + b;
                     text = `${a} + ${b} = ?`;
                 } else {
-                    const a = randInt(18, 70);
-                    const b = randInt(10, 100 - a);
+                    const a = randInt(8, 35);
+                    const b = randInt(6, 50 - a);
                     answer = a + b;
                     text = `${a} + ${b} = ?`;
                 }
@@ -682,13 +785,13 @@
                     answer = a - b;
                     text = `${a} − ${b} = ?`;
                 } else if (diff === 'medium') {
-                    const a = randInt(15, 50);
-                    const b = randInt(5, a - 2);
+                    const a = randInt(10, 30);
+                    const b = randInt(3, a - 2);
                     answer = a - b;
                     text = `${a} − ${b} = ?`;
                 } else {
-                    const a = randInt(30, 100);
-                    const b = randInt(10, a - 5);
+                    const a = randInt(18, 50);
+                    const b = randInt(5, a - 4);
                     answer = a - b;
                     text = `${a} − ${b} = ?`;
                 }
@@ -699,13 +802,13 @@
                     answer = a * b;
                     text = `${a} × ${b} = ?`;
                 } else if (diff === 'medium') {
-                    const a = randInt(3, 10);
-                    const b = randInt(3, 10);
+                    const a = randInt(2, 7);
+                    const b = randInt(2, 9);
                     answer = a * b;
                     text = `${a} × ${b} = ?`;
                 } else {
-                    const a = randInt(11, 19);
-                    const b = randInt(3, 9);
+                    const a = randInt(3, 10);
+                    const b = randInt(3, 10);
                     answer = a * b;
                     text = `${a} × ${b} = ?`;
                 }
@@ -717,14 +820,14 @@
                     answer = quotient;
                     text = `${dividend} ÷ ${divisor} = ?`;
                 } else if (diff === 'medium') {
-                    const divisor = randInt(3, 10);
-                    const quotient = randInt(3, 10);
+                    const divisor = randInt(2, 7);
+                    const quotient = randInt(2, 9);
                     const dividend = divisor * quotient;
                     answer = quotient;
                     text = `${dividend} ÷ ${divisor} = ?`;
                 } else {
-                    const divisor = randInt(3, 9);
-                    const quotient = randInt(11, 19);
+                    const divisor = randInt(3, 10);
+                    const quotient = randInt(3, 10);
                     const dividend = divisor * quotient;
                     answer = quotient;
                     text = `${dividend} ÷ ${divisor} = ?`;
@@ -733,9 +836,9 @@
 
             const optionsSet = new Set([answer]);
             let safety = 0;
-            while (optionsSet.size < 7 && safety < 250) {
+            while (optionsSet.size < 7 && safety < 200) {
                 safety++;
-                const spread = op === 'mul' ? 14 : (op === 'div' ? 8 : 10);
+                const spread = answer > 40 ? 15 : 10;
                 const offset = randInt(-spread, spread);
                 const candidate = answer + offset;
                 if (candidate >= 0 && candidate !== answer) {
@@ -750,65 +853,23 @@
             return { text, answer, options };
         }
 
-        function triggerProblemAnimation(newText) {
-            const problemEl = document.getElementById('hud-problem');
-            const flashEl = document.getElementById('hud-problem-flash');
-            const boxEl = document.getElementById('hud-problem-box');
-            if (!problemEl) return;
-
-            problemEl.textContent = newText;
-            problemEl.classList.remove('animate-problem-swap');
-            void problemEl.offsetWidth;
-            problemEl.classList.add('animate-problem-swap');
-
-            if (boxEl) {
-                boxEl.classList.remove('border-purple-400/50');
-                boxEl.classList.add('border-cyan-300', 'scale-[1.02]');
-            }
-            if (flashEl) {
-                flashEl.classList.remove('opacity-0');
-                flashEl.classList.add('opacity-100');
-            }
-
-            if (problemSwapTimeoutId) clearTimeout(problemSwapTimeoutId);
-            problemSwapTimeoutId = setTimeout(() => {
-                if (flashEl) {
-                    flashEl.classList.remove('opacity-100');
-                    flashEl.classList.add('opacity-0');
-                }
-                if (boxEl) {
-                    boxEl.classList.remove('border-cyan-300', 'scale-[1.02]');
-                    boxEl.classList.add('border-purple-400/50');
-                }
-            }, 340);
-
-            gameState.shockwaves.push({
-                x: arenaWidth * 0.5,
-                y: arenaHeight * 0.5,
-                radius: 16,
-                maxRadius: Math.max(arenaWidth, arenaHeight) * 0.42,
-                color: '#22d3ee',
-                alpha: 0.75
-            });
-        }
-
         /* ===================================================================
-           BALLS, PARTICLES, FLOATING POPUPS & BOTS AI (DT-DRIVEN)
+           BALLS, PARTICLES, FLOATING TEXTS & BOTS AI
            =================================================================== */
         function spawnBalls(problem) {
             resizeCanvas();
             const w = arenaWidth;
             const h = arenaHeight;
-            const radius = Math.max(20, Math.min(36, Math.min(w, h) * 0.072));
-            const marginX = radius + 22;
-            const marginY = radius + 26;
+            const radius = Math.max(22, Math.min(38, Math.min(w, h) * 0.068));
+            const marginX = radius + 24;
+            const marginY = radius + 28;
             const minSpawnDist = radius * 2 + 12;
             const placedBalls = [];
 
             const isNightmare = gameState.mode === 'nightmare';
             const speedBoost = isNightmare
-                ? 52 + Math.min(95, gameState.solvedCount * 6)
-                : Math.min(85, gameState.solvedCount * 4.5);
+                ? Math.min(2.15, 1.3 + gameState.solvedCount * 0.07)
+                : (gameState.mode === 'survival' ? Math.min(1.85, 1 + gameState.solvedCount * 0.06) : 1);
 
             gameState.balls = problem.options.map((val, idx) => {
                 const palette = BALL_PALETTE[idx % BALL_PALETTE.length];
@@ -826,7 +887,7 @@
                     }
                 }
 
-                const speed = 72 + Math.random() * 58 + speedBoost;
+                const speed = (72 + Math.random() * 58) * speedBoost;
                 const angle = Math.random() * Math.PI * 2;
 
                 const ball = {
@@ -865,39 +926,79 @@
             }
         }
 
-        function spawnFloatingPopup(x, y, lines) {
-            const clampedX = Math.max(64, Math.min(arenaWidth - 64, x));
-            const clampedY = Math.max(48, Math.min(arenaHeight - 48, y));
-            gameState.popups.push({
-                x: clampedX,
-                y: clampedY,
-                vy: -56,
+        function spawnFloatingText(x, y, text, color = '#34d399', scale = 1) {
+            gameState.floatingTexts.push({
+                x,
+                y,
+                text,
+                color,
+                scale,
+                vy: -68,
                 alpha: 1,
-                lines
+                life: 1.05
             });
         }
 
-        function getActiveBotConfig() {
-            if (gameState.mode === 'nightmare') {
-                return DIFFICULTY_CONFIG.nightmare;
+        function spawnShockwave(x, y, color = '#22d3ee') {
+            gameState.shockwaves.push({
+                x,
+                y,
+                radius: 18,
+                maxRadius: Math.min(arenaWidth, arenaHeight) * 0.48,
+                color,
+                alpha: 0.72
+            });
+        }
+
+        function triggerProblemSwapAnimation(newText) {
+            const problemEl = document.getElementById('hud-problem');
+            const problemBox = document.getElementById('hud-problem-box');
+            const flashEl = document.getElementById('hud-problem-flash');
+
+            if (problemEl) {
+                problemEl.textContent = newText;
+                problemEl.classList.remove('animate-problem-swap');
+                void problemEl.offsetWidth;
+                problemEl.classList.add('animate-problem-swap');
             }
-            return DIFFICULTY_CONFIG[selectedDifficulty];
+
+            if (problemBox) {
+                problemBox.classList.add('border-cyan-300', 'shadow-cyan-400/40');
+                setTimeout(() => {
+                    problemBox.classList.remove('border-cyan-300', 'shadow-cyan-400/40');
+                }, 320);
+            }
+
+            if (flashEl) {
+                flashEl.classList.remove('opacity-0');
+                flashEl.classList.add('opacity-100');
+                setTimeout(() => {
+                    flashEl.classList.remove('opacity-100');
+                    flashEl.classList.add('opacity-0');
+                }, 220);
+            }
+
+            spawnShockwave(arenaWidth * 0.5, arenaHeight * 0.5, '#22d3ee');
         }
 
         function resetBotDecisionTimers() {
             if (gameState.mode === 'training') return;
-            const cfg = getActiveBotConfig();
-            const speedFactor = gameState.mode === 'nightmare' ? 0.92 : Math.max(0.68, 1 - gameState.solvedCount * 0.015);
+            const cfgKey = gameState.mode === 'nightmare' ? 'nightmare' : selectedDifficulty;
+            const cfg = DIFFICULTY_CONFIG[cfgKey];
+            const paceFactor = gameState.mode === 'nightmare'
+                ? Math.max(0.75, 1 - gameState.solvedCount * 0.015)
+                : Math.max(0.68, 1 - gameState.solvedCount * 0.022);
             for (const bot of gameState.bots) {
-                const baseDelay = cfg.botMinDelay + Math.random() * (cfg.botMaxDelay - cfg.botMinDelay);
-                bot.decisionTimer = Math.max(0.85, baseDelay * speedFactor);
+                const rawDelay = cfg.botMinDelay + Math.random() * (cfg.botMaxDelay - cfg.botMinDelay);
+                bot.decisionTimer = rawDelay * paceFactor;
                 bot.hasActedThisCycle = false;
             }
         }
 
         function updateBotDecisions(dt) {
             if (gameState.mode === 'training' || gameState.phase !== 'playing') return;
-            const cfg = getActiveBotConfig();
+            const cfgKey = gameState.mode === 'nightmare' ? 'nightmare' : selectedDifficulty;
+            const cfg = DIFFICULTY_CONFIG[cfgKey];
 
             for (let botIdx = 0; botIdx < gameState.bots.length; botIdx++) {
                 const bot = gameState.bots[botIdx];
@@ -957,7 +1058,22 @@
             toastTimeoutId = setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-4');
                 toast.classList.remove('opacity-100', 'translate-y-0');
-            }, 1500);
+            }, 1300);
+        }
+
+        function updateStreakHUD() {
+            const badge = document.getElementById('hud-streak-badge');
+            const countEl = document.getElementById('hud-streak-count');
+            if (!badge || !countEl) return;
+
+            if (gameState.streak >= 2) {
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-flex');
+                countEl.textContent = `x${gameState.streak}`;
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('inline-flex');
+            }
         }
 
         function updateLeaderboardHUD() {
@@ -966,28 +1082,24 @@
             if (!listEl) return;
 
             const participants = [
-                { id: 'player', name: playerName, score: gameState.playerScore, isPlayer: true, icon: '⚡' },
+                { id: 'player', name: playerName, score: gameState.playerScore, isPlayer: true, icon: playerAvatar },
                 ...gameState.bots.map(b => ({ id: b.id, name: b.name, score: b.score, isPlayer: false, icon: b.icon }))
             ];
 
             participants.sort((a, b) => b.score - a.score);
-            const topScore = participants[0] ? participants[0].score : 0;
 
             listEl.innerHTML = participants.map((p, idx) => {
-                const isLeading = topScore > 0 && p.score === topScore;
+                const isLeader = idx === 0 && p.score > 0;
                 const highlight = p.isPlayer
-                    ? 'bg-purple-600/30 border-purple-400/50 text-white font-extrabold'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-300 font-semibold';
-                const shortName = p.isPlayer ? 'Вы' : p.name.split('-')[1] || p.name;
+                    ? 'bg-purple-600/35 border-purple-400/60 text-white font-extrabold'
+                    : 'bg-slate-900/70 border-slate-800 text-slate-300 font-semibold';
                 return `
-                    <div class="flex items-center justify-between text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border ${highlight}">
-                        <div class="flex items-center gap-1 truncate">
-                            <span class="hidden lg:inline text-[10px] text-slate-400 w-3">${idx + 1}.</span>
-                            <span>${isLeading ? '👑' : p.icon}</span>
-                            <span class="truncate lg:inline hidden">${p.name}</span>
-                            <span class="truncate lg:hidden">${shortName}</span>
+                    <div class="flex items-center justify-between text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border ${highlight} min-w-0">
+                        <div class="flex items-center gap-1 truncate min-w-0">
+                            <span class="text-[10px] shrink-0">${isLeader ? '👑' : p.icon}</span>
+                            <span class="truncate">${p.name}</span>
                         </div>
-                        <span class="font-mono font-bold text-cyan-300 ml-1">${formatScore(p.score)}</span>
+                        <span class="font-mono font-bold text-cyan-300 ml-1 shrink-0">${formatScore(p.score)}</span>
                     </div>
                 `;
             }).join('');
@@ -995,20 +1107,21 @@
 
         function updateTimerHUD(force = false) {
             const timerEl = document.getElementById('hud-timer');
+            const timerBar = document.getElementById('hud-timer-bar');
             if (!timerEl) return;
 
-            if (gameState.mode === 'training') {
-                const formatted = `${gameState.elapsedTime.toFixed(1)} с`;
-                if (force || formatted !== lastTimerText) {
-                    lastTimerText = formatted;
-                    timerEl.textContent = formatted;
+            const maxDuration = getModeRoundDuration(gameState.mode);
+            const pct = Math.max(0, Math.min(100, (gameState.roundTimeLeft / maxDuration) * 100));
+
+            if (timerBar) {
+                timerBar.style.width = `${pct}%`;
+                if (gameState.roundTimeLeft <= 5.0) {
+                    timerBar.className = 'h-full bg-rose-500 transition-all duration-100 ease-linear';
+                } else if (gameState.roundTimeLeft <= maxDuration * 0.5) {
+                    timerBar.className = 'h-full bg-amber-400 transition-all duration-100 ease-linear';
+                } else {
+                    timerBar.className = 'h-full bg-emerald-400 transition-all duration-100 ease-linear';
                 }
-                if (force || lastTimerUrgent !== false) {
-                    lastTimerUrgent = false;
-                    timerEl.classList.remove('text-rose-400', 'text-amber-300');
-                    timerEl.classList.add('text-cyan-300');
-                }
-                return;
             }
 
             const formatted = `${Math.max(0, gameState.roundTimeLeft).toFixed(1)} с`;
@@ -1020,35 +1133,70 @@
             const isUrgent = gameState.roundTimeLeft <= 5.0;
             if (force || isUrgent !== lastTimerUrgent) {
                 lastTimerUrgent = isUrgent;
-                timerEl.classList.remove('text-cyan-300');
                 if (isUrgent) {
-                    timerEl.classList.remove('text-amber-300');
+                    timerEl.classList.remove('text-amber-300', 'text-cyan-300');
                     timerEl.classList.add('text-rose-400');
+                } else if (gameState.mode === 'training') {
+                    timerEl.classList.remove('text-rose-400', 'text-amber-300');
+                    timerEl.classList.add('text-cyan-300');
                 } else {
                     timerEl.classList.add('text-amber-300');
-                    timerEl.classList.remove('text-rose-400');
+                    timerEl.classList.remove('text-rose-400', 'text-cyan-300');
                 }
             }
         }
 
         /* ===================================================================
-           OPERATION, DIFFICULTY & MODE UI
+           MODE & OPERATION SWITCHERS (START SCREEN)
            =================================================================== */
-        function updateDifficultyDescriptions() {
+        function updateDifficultyTexts() {
             const opInfo = OPERATION_LABELS[selectedOperation];
             document.getElementById('desc-diff-easy').textContent = opInfo.easy;
             document.getElementById('desc-diff-medium').textContent = opInfo.medium;
             document.getElementById('desc-diff-hard').textContent = opInfo.hard;
+
             const nightmareDesc = document.getElementById('desc-diff-nightmare');
             if (nightmareDesc) {
                 nightmareDesc.textContent = `${opInfo.hard} • Сверхбыстрые боты и шары`;
             }
 
-            if (selectedMode === 'survival') {
-                document.getElementById('badge-diff-easy').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'easy')}б`;
-                document.getElementById('badge-diff-medium').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'medium')}б`;
-                document.getElementById('badge-diff-hard').textContent = `+${getPointsPerAnswer('survival', selectedOperation, 'hard')}б`;
+            if (selectedMode === 'training') {
+                document.getElementById('badge-diff-easy').textContent = 'Без баллов';
+                document.getElementById('badge-diff-medium').textContent = 'Без баллов';
+                document.getElementById('badge-diff-hard').textContent = 'Без баллов';
+            } else {
+                document.getElementById('badge-diff-easy').textContent = `+${formatScore(getPointsPerAnswer('survival', selectedOperation, 'easy'))}б`;
+                document.getElementById('badge-diff-medium').textContent = `+${formatScore(getPointsPerAnswer('survival', selectedOperation, 'medium'))}б`;
+                document.getElementById('badge-diff-hard').textContent = `+${formatScore(getPointsPerAnswer('survival', selectedOperation, 'hard'))}б`;
             }
+        }
+
+        function applyOperationUI(op) {
+            selectedOperation = op;
+            const opButtons = document.querySelectorAll('.btn-op');
+            opButtons.forEach(btn => {
+                btn.classList.remove(
+                    'border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40',
+                    'border-pink-400', 'bg-pink-950/40', 'ring-pink-400/40',
+                    'border-purple-400', 'bg-purple-950/40', 'ring-purple-400/40',
+                    'border-amber-400', 'bg-amber-950/40', 'ring-amber-400/40'
+                );
+                btn.classList.add('border-slate-700');
+
+                if (btn.dataset.op === op) {
+                    btn.classList.remove('border-slate-700');
+                    if (op === 'add') {
+                        btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
+                    } else if (op === 'sub') {
+                        btn.classList.add('border-pink-400', 'bg-pink-950/40', 'ring-2', 'ring-pink-400/40');
+                    } else if (op === 'mul') {
+                        btn.classList.add('border-purple-400', 'bg-purple-950/40', 'ring-2', 'ring-purple-400/40');
+                    } else {
+                        btn.classList.add('border-amber-400', 'bg-amber-950/40', 'ring-2', 'ring-amber-400/40');
+                    }
+                }
+            });
+            updateDifficultyTexts();
         }
 
         function applyModeUI(mode) {
@@ -1059,87 +1207,78 @@
             const modeChips = document.getElementById('mode-chips');
             const diffSection = document.getElementById('difficulty-section');
             const nightmareBanner = document.getElementById('nightmare-diff-banner');
-            const btnStart = document.getElementById('btn-start-game');
+            const btnStartGame = document.getElementById('btn-start-game');
             const btnStartText = document.getElementById('btn-start-text');
 
-            const defaultActive = ['bg-gradient-to-r', 'from-purple-600/80', 'to-cyan-600/80', 'text-white', 'shadow-md', 'border-purple-400/40'];
-            const nightmareActive = ['bg-gradient-to-r', 'from-rose-600/90', 'to-amber-600/90', 'text-white', 'shadow-md', 'border-rose-400/60'];
+            const survivalClasses = ['bg-gradient-to-r', 'from-purple-600/80', 'to-cyan-600/80', 'text-white', 'shadow-md', 'border-purple-400/40'];
+            const nightmareClasses = ['bg-gradient-to-r', 'from-rose-600/90', 'to-red-700/90', 'text-white', 'shadow-md', 'border-rose-400/50'];
             const inactiveClasses = ['text-slate-400', 'hover:text-white', 'hover:bg-slate-800/70', 'border-transparent'];
 
             [tabSurvival, tabNightmare, tabTraining].forEach(tab => {
-                tab.classList.remove(...defaultActive, ...nightmareActive);
+                tab.classList.remove(...survivalClasses, ...nightmareClasses);
                 tab.classList.add(...inactiveClasses);
             });
 
-            if (mode === 'survival') {
-                tabSurvival.classList.remove(...inactiveClasses);
-                tabSurvival.classList.add(...defaultActive);
+            btnStartGame.classList.remove('from-rose-600', 'via-red-600', 'to-amber-500', 'hover:from-rose-500', 'hover:to-amber-400', 'shadow-rose-500/40');
+            btnStartGame.classList.add('from-purple-600', 'via-pink-600', 'to-cyan-500', 'hover:from-purple-500', 'hover:to-cyan-400', 'shadow-purple-500/40');
 
+            if (mode === 'survival') {
+                tabSurvival.classList.add(...survivalClasses);
+                tabSurvival.classList.remove(...inactiveClasses);
                 diffSection.classList.remove('hidden');
                 nightmareBanner.classList.add('hidden');
-                btnStart.classList.remove('from-rose-600', 'via-red-600', 'to-amber-500');
-                btnStart.classList.add('from-purple-600', 'via-pink-600', 'to-cyan-500');
 
                 modeChips.innerHTML = `
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-clock"></i> 15 сек старт
+                        <i class="fa-solid fa-clock"></i> 20 сек раунд
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                        <i class="fa-solid fa-bolt"></i> На скорость счёта
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
                         <i class="fa-solid fa-robot"></i> 3 соперника
                     </span>
                 `;
                 btnStartText.textContent = 'НАЧАТЬ ВЫЖИВАНИЕ';
-
-                updateDifficultyDescriptions();
             } else if (mode === 'nightmare') {
+                tabNightmare.classList.add(...nightmareClasses);
                 tabNightmare.classList.remove(...inactiveClasses);
-                tabNightmare.classList.add(...nightmareActive);
-
                 diffSection.classList.add('hidden');
                 nightmareBanner.classList.remove('hidden');
-                btnStart.classList.remove('from-purple-600', 'via-pink-600', 'to-cyan-500');
-                btnStart.classList.add('from-rose-600', 'via-red-600', 'to-amber-500');
+
+                btnStartGame.classList.remove('from-purple-600', 'via-pink-600', 'to-cyan-500', 'hover:from-purple-500', 'hover:to-cyan-400', 'shadow-purple-500/40');
+                btnStartGame.classList.add('from-rose-600', 'via-red-600', 'to-amber-500', 'hover:from-rose-500', 'hover:to-amber-400', 'shadow-rose-500/40');
 
                 modeChips.innerHTML = `
-                    <span class="px-3 py-1.5 rounded-xl bg-rose-950/90 border border-rose-500/40 text-rose-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-skull"></i> Макс. сложность
+                    <span class="px-3 py-1.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-skull"></i> Только максимум
                     </span>
-                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-crown"></i> +4 балла
+                    <span class="px-3 py-1.5 rounded-xl bg-amber-950/70 border border-amber-500/40 text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star"></i> +4 б. за ответ
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-bolt"></i> +3 сек за ответ
+                        <i class="fa-solid fa-clock"></i> 20 сек раунд
                     </span>
                 `;
-                btnStartText.textContent = 'НАЧАТЬ КОШМАР';
-                updateDifficultyDescriptions();
+                btnStartText.textContent = 'ВОЙТИ В КОШМАР';
             } else {
+                tabTraining.classList.add(...survivalClasses);
                 tabTraining.classList.remove(...inactiveClasses);
-                tabTraining.classList.add(...defaultActive);
-
                 diffSection.classList.remove('hidden');
                 nightmareBanner.classList.add('hidden');
-                btnStart.classList.remove('from-rose-600', 'via-red-600', 'to-amber-500');
-                btnStart.classList.add('from-purple-600', 'via-pink-600', 'to-cyan-500');
 
                 modeChips.innerHTML = `
-                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-infinity"></i> Без лимита времени
-                    </span>
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-check"></i> Без ботов и баллов
+                        <i class="fa-solid fa-clock"></i> 30 сек раунд
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-shield"></i> Без ботов и баллов
                     </span>
                 `;
                 btnStartText.textContent = 'НАЧАТЬ ТРЕНИРОВКУ';
-
-                document.getElementById('badge-diff-easy').textContent = 'Практика';
-                document.getElementById('badge-diff-medium').textContent = 'Практика';
-                document.getElementById('badge-diff-hard').textContent = 'Практика';
-                updateDifficultyDescriptions();
             }
+
+            updateDifficultyTexts();
         }
 
         /* ===================================================================
@@ -1150,10 +1289,6 @@
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
-        }
-
-        function getEffectiveDifficulty() {
-            return selectedMode === 'nightmare' ? 'hard' : selectedDifficulty;
         }
 
         function startMatch() {
@@ -1168,24 +1303,30 @@
                 cCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
             }
 
-            const effectiveDiff = getEffectiveDifficulty();
-            const cfg = getActiveBotConfig();
             const isTraining = selectedMode === 'training';
+            const isNightmare = selectedMode === 'nightmare';
+            const effectiveDiff = isNightmare ? 'hard' : selectedDifficulty;
+            const cfg = isNightmare ? DIFFICULTY_CONFIG.nightmare : DIFFICULTY_CONFIG[selectedDifficulty];
+            const opInfo = OPERATION_LABELS[selectedOperation];
+            const ptsPerAnswer = getPointsPerAnswer(selectedMode, selectedOperation, effectiveDiff);
+            const initialDuration = getModeRoundDuration(selectedMode);
 
             gameState = {
                 mode: selectedMode,
+                operation: selectedOperation,
+                effectiveDiff,
                 phase: isTraining ? 'playing' : 'countdown',
                 countdownRemaining: isTraining ? 0 : COUNTDOWN_STEP_DURATION * 3,
                 lastCountdownStep: isTraining ? 0 : 3,
-                roundTimeLeft: SURVIVAL_START_TIME,
-                elapsedTime: 0,
+                roundTimeLeft: initialDuration,
                 solvedCount: 0,
+                streak: 0,
                 currentProblem: null,
                 balls: [],
                 particles: [],
-                popups: [],
+                floatingTexts: [],
                 shockwaves: [],
-                wrongFlashAlpha: 0,
+                wrongVignetteAlpha: 0,
                 playerScore: 0,
                 playerGrabs: 0,
                 playerClicks: 0,
@@ -1196,6 +1337,7 @@
             playerHand.active = false;
             botClaws = [];
 
+            screenWelcome.classList.add('hidden');
             screenStart.classList.add('hidden');
             screenResults.classList.add('hidden');
             screenGame.classList.remove('hidden');
@@ -1213,7 +1355,7 @@
                 hudMatchInfo.classList.remove('lg:col-span-3');
                 hudMatchInfo.classList.add('lg:col-span-4');
                 hudLeaderboardCard.classList.add('hidden');
-                hudTimerLabel.textContent = 'Время';
+                hudTimerLabel.textContent = 'До конца';
                 hudRewardLabel.textContent = 'Решено';
                 hudPointsEl.textContent = '0';
                 exitIcon.className = 'fa-solid fa-flag-checkered text-rose-400';
@@ -1224,15 +1366,16 @@
                 hudLeaderboardCard.classList.remove('hidden');
                 hudTimerLabel.textContent = 'До конца';
                 hudRewardLabel.textContent = 'Награда';
-                hudPointsEl.textContent = `+${formatScore(getPointsPerAnswer())} б.`;
-                document.getElementById('hud-diff-badge').textContent = `${OPERATION_LABELS[selectedOperation].name} • ${cfg.name}`;
+                hudPointsEl.textContent = `+${formatScore(ptsPerAnswer)} б.`;
+                document.getElementById('hud-diff-badge').textContent = `${opInfo.name} • ${cfg.name}`;
                 exitIcon.className = 'fa-solid fa-house text-rose-400';
                 exitText.textContent = 'В меню';
             }
 
+            syncViewportLayout();
             updateTimerHUD(true);
             updateLeaderboardHUD();
-            resizeCanvas();
+            updateStreakHUD();
 
             if (isTraining) {
                 startNextProblemCycle();
@@ -1247,17 +1390,17 @@
 
         function startNextProblemCycle() {
             if (gameState.phase === 'ended' || gameState.phase === 'idle') return;
-            if (gameState.mode !== 'training' && gameState.roundTimeLeft <= 0) return;
+            if (gameState.roundTimeLeft <= 0) return;
 
             playerHand.active = false;
             botClaws = [];
             gameState.balls = [];
             gameState.phase = 'playing';
 
-            const problem = generateMathProblem(selectedOperation, getEffectiveDifficulty());
+            const problem = generateMathProblem(gameState.effectiveDiff, gameState.operation);
             gameState.currentProblem = problem;
 
-            triggerProblemAnimation(problem.text);
+            triggerProblemSwapAnimation(problem.text);
 
             soundEngine.blast();
             spawnBalls(problem);
@@ -1269,6 +1412,7 @@
             gameState.phase = 'idle';
             screenGame.classList.add('hidden');
             screenResults.classList.add('hidden');
+            screenWelcome.classList.add('hidden');
             btnExitMenu.classList.add('hidden');
             screenStart.classList.remove('hidden');
             syncViewportLayout();
@@ -1292,6 +1436,7 @@
             const statThirdLabel = document.getElementById('stat-third-label');
             const statThirdVal = document.getElementById('stat-total-score');
             const btnReplayText = document.getElementById('btn-replay-text');
+            const opName = OPERATION_LABELS[gameState.operation].name;
 
             const accuracy = gameState.playerClicks > 0
                 ? Math.round((gameState.playerGrabs / gameState.playerClicks) * 100)
@@ -1300,14 +1445,14 @@
             if (gameState.mode === 'training') {
                 trophyEl.textContent = '🎯';
                 titleEl.textContent = 'Тренировка завершена!';
-                subtitleEl.textContent = `${OPERATION_LABELS[selectedOperation].name} • ${DIFFICULTY_CONFIG[selectedDifficulty].name}`;
+                subtitleEl.textContent = `${opName} • ${DIFFICULTY_CONFIG[gameState.effectiveDiff].name} • 30 сек`;
                 podiumList.classList.add('hidden');
 
                 statGrabsLabel.textContent = 'Решено примеров';
                 document.getElementById('stat-grabs').textContent = gameState.playerGrabs;
                 document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
-                statThirdLabel.textContent = 'Время';
-                statThirdVal.textContent = `${gameState.elapsedTime.toFixed(1)} с`;
+                statThirdLabel.textContent = 'Длительность';
+                statThirdVal.textContent = `${TRAINING_DURATION.toFixed(0)} с`;
                 btnReplayText.textContent = 'ТРЕНИРОВАТЬСЯ СНОВА';
                 soundEngine.blast();
                 return;
@@ -1317,23 +1462,24 @@
             trophyEl.textContent = isNightmare ? '💀' : '🔥';
             titleEl.textContent = isNightmare ? 'Кошмар завершён!' : 'Выживание окончено!';
             podiumList.classList.remove('hidden');
-            statGrabsLabel.textContent = 'Время выживания';
+            statGrabsLabel.textContent = 'Поймано шаров';
             statThirdLabel.textContent = 'Итого очков';
-            btnReplayText.textContent = isNightmare ? 'ИГРАТЬ СНОВА' : 'ВЫЖИТЬ СНОВА';
+            btnReplayText.textContent = isNightmare ? 'СНОВА В КОШМАР' : 'ВЫЖИТЬ СНОВА';
 
             const participants = [
-                { name: playerName, score: gameState.playerScore, isPlayer: true, icon: '⚡' },
+                { name: playerName, score: gameState.playerScore, isPlayer: true, icon: playerAvatar },
                 ...gameState.bots.map(b => ({ name: b.name, score: b.score, isPlayer: false, icon: b.icon }))
             ];
             participants.sort((a, b) => b.score - a.score);
 
             const playerRank = participants.findIndex(p => p.isPlayer) + 1;
+            const cfgName = isNightmare ? 'КОШМАР' : DIFFICULTY_CONFIG[gameState.effectiveDiff].name;
             if (playerRank === 1) {
-                subtitleEl.textContent = '🥇 Поздравляем! Вы заняли 1-е место и продержались дольше всех!';
+                subtitleEl.textContent = `🥇 1-е место! ${opName} (${cfgName}) • Поймано шаров: ${gameState.playerGrabs}`;
                 soundEngine.fanfare();
                 startConfetti();
             } else {
-                subtitleEl.textContent = `Вы заняли ${playerRank}-е место! Попробуйте удержать таймер дольше!`;
+                subtitleEl.textContent = `${playerRank}-е место • ${opName} (${cfgName}) • Поймано шаров: ${gameState.playerGrabs}`;
                 soundEngine.blast();
             }
 
@@ -1354,7 +1500,7 @@
                 `;
             }).join('');
 
-            document.getElementById('stat-grabs').textContent = `${gameState.elapsedTime.toFixed(1)} с`;
+            document.getElementById('stat-grabs').textContent = gameState.playerGrabs;
             document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
             statThirdVal.textContent = formatScore(gameState.playerScore);
         }
@@ -1375,7 +1521,7 @@
                 const b = gameState.balls[i];
                 if (b.grabbed) continue;
                 const dist = Math.hypot(clickX - b.x, clickY - b.y);
-                if (dist <= b.radius + 8) {
+                if (dist <= b.radius + 10) {
                     hitBall = b;
                     break;
                 }
@@ -1412,12 +1558,12 @@
             } else {
                 hitBall.wrongFlashTimer = PLAYER_COOLDOWN_DURATION;
                 gameState.playerCooldown = PLAYER_COOLDOWN_DURATION;
-                gameState.wrongFlashAlpha = 0.55;
+                gameState.wrongVignetteAlpha = 0.65;
+                gameState.streak = 0;
+                updateStreakHUD();
                 soundEngine.wrong();
-                createBurstParticles(hitBall.x, hitBall.y, '#ef4444', 16);
-                spawnFloatingPopup(hitBall.x, hitBall.y - 10, [
-                    { text: 'Мимо!', color: '#f87171', size: 20 }
-                ]);
+                createBurstParticles(hitBall.x, hitBall.y, '#ef4444', 14);
+                spawnFloatingText(hitBall.x, hitBall.y - 14, 'Мимо!', '#f87171', 1.0);
 
                 canvasContainer.classList.remove('animate-shake');
                 void canvasContainer.offsetWidth;
@@ -1455,75 +1601,95 @@
         /* ===================================================================
            RENDERING & ANIMATION LOOP
            =================================================================== */
-        function drawCosmicGrid(w, h) {
+        function drawCosmicGrid(w, h, dt) {
             ctx.clearRect(0, 0, w, h);
 
-            const grad = ctx.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, Math.max(w, h) * 0.7);
-            grad.addColorStop(0, '#131c31');
-            grad.addColorStop(1, '#090d16');
+            const isNightmare = gameState.mode === 'nightmare';
+            const grad = ctx.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, Math.max(w, h) * 0.72);
+            if (isNightmare) {
+                grad.addColorStop(0, '#2a0e18');
+                grad.addColorStop(1, '#070b14');
+            } else {
+                grad.addColorStop(0, '#0f1e38');
+                grad.addColorStop(1, '#070d19');
+            }
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, h);
 
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.06)';
+            // Live Parallax Starfield / Embers
+            for (const s of bgStars) {
+                s.ry -= s.speed * (isNightmare ? 2.4 : 1) * dt;
+                if (s.ry < -0.02) {
+                    s.ry = 1.02;
+                    s.rx = Math.random();
+                }
+                s.phase += dt * 3.2;
+                const twinkle = 0.25 + (Math.sin(s.phase) + 1) * 0.35;
+
+                ctx.save();
+                ctx.globalAlpha = twinkle;
+                ctx.fillStyle = isNightmare ? '#fb7185' : s.tint;
+                ctx.beginPath();
+                ctx.arc(s.rx * w, s.ry * h, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Fine Millimeter / Graph Paper Grid
+            const minorStep = 28;
+            const majorStep = minorStep * 4;
+            ctx.strokeStyle = isNightmare ? 'rgba(244, 63, 94, 0.06)' : 'rgba(56, 189, 248, 0.055)';
             ctx.lineWidth = 1;
-            const step = 40;
-            for (let x = 0; x < w; x += step) {
+            for (let x = 0; x < w; x += minorStep) {
                 ctx.beginPath();
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, h);
                 ctx.stroke();
             }
-            for (let y = 0; y < h; y += step) {
+            for (let y = 0; y < h; y += minorStep) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
                 ctx.lineTo(w, y);
                 ctx.stroke();
             }
-        }
 
-        function drawArenaAtmosphere(w, h, now, dt) {
-            for (let i = gameState.shockwaves.length - 1; i >= 0; i--) {
-                const sw = gameState.shockwaves[i];
-                sw.radius += 540 * dt;
-                sw.alpha -= 1.55 * dt;
-                if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
-                    gameState.shockwaves.splice(i, 1);
-                    continue;
-                }
-                ctx.save();
-                ctx.strokeStyle = sw.color;
-                ctx.globalAlpha = Math.max(0, sw.alpha);
-                ctx.lineWidth = 3;
+            // Major Coordinate Grid Lines
+            ctx.strokeStyle = isNightmare ? 'rgba(244, 63, 94, 0.14)' : 'rgba(56, 189, 248, 0.13)';
+            for (let x = 0; x < w; x += majorStep) {
                 ctx.beginPath();
-                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
                 ctx.stroke();
-                ctx.restore();
+            }
+            for (let y = 0; y < h; y += majorStep) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
             }
 
-            if (gameState.mode !== 'training' && gameState.phase === 'playing' && gameState.roundTimeLeft <= 5.0) {
-                const pulse = 0.22 + 0.16 * Math.sin(now * 0.014);
-                const rad = Math.max(w, h) * 0.65;
-                const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, rad * 0.45, w * 0.5, h * 0.5, rad);
-                vig.addColorStop(0, 'rgba(239, 68, 68, 0)');
-                vig.addColorStop(1, `rgba(239, 68, 68, ${pulse.toFixed(3)})`);
+            // Subtle Cartesian Coordinate Axes (X / Y) through Center
+            const cx = Math.round(w / 2);
+            const cy = Math.round(h / 2);
+            ctx.save();
+            ctx.strokeStyle = isNightmare ? 'rgba(251, 113, 133, 0.22)' : 'rgba(34, 211, 238, 0.2)';
+            ctx.lineWidth = 1.2;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath();
+            ctx.moveTo(14, cy);
+            ctx.lineTo(w - 14, cy);
+            ctx.moveTo(cx, 14);
+            ctx.lineTo(cx, h - 14);
+            ctx.stroke();
+            ctx.setLineDash([]);
 
-                ctx.save();
-                ctx.fillStyle = vig;
-                ctx.fillRect(0, 0, w, h);
-
-                ctx.strokeStyle = `rgba(248, 113, 113, ${(pulse * 1.9).toFixed(3)})`;
-                ctx.lineWidth = 4;
-                ctx.strokeRect(2, 2, w - 4, h - 4);
-                ctx.restore();
-            }
-
-            if (gameState.wrongFlashAlpha > 0) {
-                ctx.save();
-                ctx.fillStyle = `rgba(239, 68, 68, ${gameState.wrongFlashAlpha.toFixed(3)})`;
-                ctx.fillRect(0, 0, w, h);
-                ctx.restore();
-                gameState.wrongFlashAlpha = Math.max(0, gameState.wrongFlashAlpha - 1.6 * dt);
-            }
+            // Axis labels (x, y, 0)
+            ctx.fillStyle = isNightmare ? 'rgba(251, 113, 133, 0.35)' : 'rgba(103, 232, 249, 0.35)';
+            ctx.font = '700 11px "JetBrains Mono", monospace';
+            ctx.fillText('y', cx + 7, 22);
+            ctx.fillText('x', w - 22, cy - 7);
+            ctx.fillText('0', cx + 6, cy + 13);
+            ctx.restore();
         }
 
         function drawArenaBases(w, h) {
@@ -1589,9 +1755,31 @@
             ctx.font = '16px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(onCooldown ? '⏳' : '⚡', 0, 1);
+            ctx.fillText(onCooldown ? '⏳' : playerAvatar, 0, 1);
 
             ctx.restore();
+        }
+
+        function drawScreenVignettes(w, h, dt) {
+            if (gameState.wrongVignetteAlpha > 0) {
+                gameState.wrongVignetteAlpha = Math.max(0, gameState.wrongVignetteAlpha - 1.9 * dt);
+                const vGrad = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.72);
+                vGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+                vGrad.addColorStop(1, `rgba(239, 68, 68, ${gameState.wrongVignetteAlpha * 0.55})`);
+                ctx.fillStyle = vGrad;
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            if (gameState.phase === 'playing' && gameState.roundTimeLeft <= 5.0) {
+                const pulse = 0.35 + 0.35 * Math.sin(performance.now() * 0.014);
+                ctx.save();
+                ctx.strokeStyle = `rgba(244, 63, 94, ${pulse})`;
+                ctx.lineWidth = 8;
+                ctx.shadowColor = '#f43f5e';
+                ctx.shadowBlur = 22;
+                ctx.strokeRect(4, 4, w - 8, h - 8);
+                ctx.restore();
+            }
         }
 
         function drawCountdownOverlay(w, h) {
@@ -1607,7 +1795,7 @@
             ctx.translate(w / 2, h / 2);
             ctx.scale(scale, scale);
 
-            ctx.shadowColor = '#06b6d4';
+            ctx.shadowColor = gameState.mode === 'nightmare' ? '#f43f5e' : '#06b6d4';
             ctx.shadowBlur = 28;
             ctx.fillStyle = '#ffffff';
             ctx.font = '900 84px Inter, sans-serif';
@@ -1651,6 +1839,7 @@
                 }
             }
 
+            // Elastic ball-to-ball collisions
             for (let i = 0; i < balls.length; i++) {
                 const b1 = balls[i];
                 if (b1.grabbed) continue;
@@ -1688,10 +1877,11 @@
                 }
             }
 
+            // Draw 3D Volumetric Energy Orbs
             for (const b of balls) {
                 const isFlashingWrong = b.wrongFlashTimer > 0;
-                const coreCol = isFlashingWrong ? '#ef4444' : b.palette.fill;
-                const glowCol = isFlashingWrong ? '#f87171' : b.palette.glow;
+                const fillCol = isFlashingWrong ? '#dc2626' : b.palette.fill;
+                const glowCol = isFlashingWrong ? '#ef4444' : b.palette.glow;
                 const borderCol = isFlashingWrong ? '#fecaca' : b.palette.border;
 
                 ctx.save();
@@ -1699,23 +1889,19 @@
                 ctx.scale(b.scale, b.scale);
 
                 ctx.shadowColor = glowCol;
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 18;
 
-                const sphereGrad = ctx.createRadialGradient(
-                    -b.radius * 0.32,
-                    -b.radius * 0.32,
-                    b.radius * 0.1,
-                    0,
-                    0,
-                    b.radius
+                const orbGrad = ctx.createRadialGradient(
+                    -b.radius * 0.25, -b.radius * 0.25, b.radius * 0.1,
+                    0, 0, b.radius
                 );
-                sphereGrad.addColorStop(0, glowCol);
-                sphereGrad.addColorStop(0.55, coreCol);
-                sphereGrad.addColorStop(1, '#090d16');
+                orbGrad.addColorStop(0, isFlashingWrong ? '#991b1b' : '#1e1b4b');
+                orbGrad.addColorStop(0.68, fillCol);
+                orbGrad.addColorStop(1, glowCol);
 
                 ctx.beginPath();
                 ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
-                ctx.fillStyle = sphereGrad;
+                ctx.fillStyle = orbGrad;
                 ctx.fill();
 
                 ctx.lineWidth = 2.5;
@@ -1724,20 +1910,18 @@
 
                 ctx.shadowBlur = 0;
                 ctx.beginPath();
-                ctx.arc(0, 0, b.radius * 0.78, 0, Math.PI * 2);
+                ctx.arc(0, 0, b.radius * 0.82, 0, Math.PI * 2);
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
                 ctx.stroke();
 
                 ctx.beginPath();
-                ctx.ellipse(-b.radius * 0.3, -b.radius * 0.34, b.radius * 0.28, b.radius * 0.16, -0.65, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.42)';
+                ctx.ellipse(-b.radius * 0.28, -b.radius * 0.32, b.radius * 0.24, b.radius * 0.14, -0.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.34)';
                 ctx.fill();
 
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-                ctx.shadowBlur = 6;
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `900 ${Math.round(b.radius * 0.72)}px Inter, sans-serif`;
+                ctx.font = `800 ${Math.round(b.radius * 0.72)}px "JetBrains Mono", Inter, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(String(b.value), 0, 1);
@@ -1748,7 +1932,7 @@
 
         function updateAndDrawBotClaws(dt) {
             if (gameState.mode === 'training') return;
-            const clawSpeed = 5.2;
+            const clawSpeed = gameState.mode === 'nightmare' ? 5.6 : 5.1;
             for (let i = 0; i < botClaws.length; i++) {
                 const claw = botClaws[i];
                 if (!claw || !claw.active) continue;
@@ -1779,7 +1963,7 @@
                         if (claw.targetBall) {
                             const grabbed = claw.targetBall;
                             if (grabbed.isCorrect) {
-                                const pts = getPointsPerAnswer();
+                                const pts = getPointsPerAnswer(gameState.mode, gameState.operation, gameState.effectiveDiff);
                                 claw.bot.score += pts;
                                 gameState.solvedCount++;
                                 updateLeaderboardHUD();
@@ -1802,13 +1986,9 @@
                     }
                 }
 
-                const angle = Math.atan2(claw.currentY - claw.anchorY, claw.currentX - claw.anchorX);
-                const isClosed = claw.state === 'retracting' && Boolean(claw.targetBall);
-                const jawSpread = isClosed ? 0.24 : 0.68;
-
                 ctx.save();
                 ctx.strokeStyle = claw.bot.color;
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 5;
                 ctx.shadowColor = claw.bot.color;
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
@@ -1816,23 +1996,16 @@
                 ctx.lineTo(claw.currentX, claw.currentY);
                 ctx.stroke();
 
-                ctx.translate(claw.currentX, claw.currentY);
-                ctx.rotate(angle);
-
                 ctx.fillStyle = '#0f172a';
                 ctx.beginPath();
-                ctx.arc(0, 0, 10, 0, Math.PI * 2);
+                ctx.arc(claw.currentX, claw.currentY, 14, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.stroke();
 
-                [-1, 1].forEach((dir) => {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, 15, dir * jawSpread, dir * (jawSpread + 0.55), dir < 0);
-                    ctx.lineWidth = 3.5;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
-                });
-
+                ctx.font = '14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(claw.bot.icon, claw.currentX, claw.currentY);
                 ctx.restore();
             }
         }
@@ -1855,27 +2028,22 @@
                 if (playerHand.progress <= 0) {
                     playerHand.active = false;
                     if (playerHand.grabbedBall && !playerHand.isWrong) {
-                        playerHand.grabbedBall.grabbed = true;
-                        gameState.balls = gameState.balls.filter(b => b !== playerHand.grabbedBall);
                         gameState.playerGrabs++;
                         gameState.solvedCount++;
+                        gameState.streak++;
+                        updateStreakHUD();
                         soundEngine.correct();
 
                         if (gameState.mode === 'training') {
                             document.getElementById('hud-points-per-ball').textContent = String(gameState.playerGrabs);
-                            spawnFloatingPopup(playerHand.targetX, playerHand.targetY - 12, [
-                                { text: 'Верно! 🎯', color: '#34d399', size: 22 }
-                            ]);
+                            spawnFloatingText(playerHand.targetX, playerHand.targetY - 12, 'Верно! ✓', '#34d399', 1.15);
                         } else {
-                            const pts = getPointsPerAnswer();
+                            const pts = getPointsPerAnswer(gameState.mode, gameState.operation, gameState.effectiveDiff);
                             gameState.playerScore += pts;
-                            gameState.roundTimeLeft = Math.min(SURVIVAL_MAX_TIME, gameState.roundTimeLeft + SURVIVAL_TIME_BONUS);
-                            updateTimerHUD(true);
                             updateLeaderboardHUD();
-                            spawnFloatingPopup(playerHand.targetX, playerHand.targetY - 14, [
-                                { text: `+${formatScore(pts)} б.`, color: '#facc15', size: 23 },
-                                { text: `+${SURVIVAL_TIME_BONUS.toFixed(1)} с`, color: '#34d399', size: 17 }
-                            ]);
+
+                            const streakSuffix = gameState.streak >= 3 ? ` 🔥x${gameState.streak}` : '';
+                            spawnFloatingText(playerHand.targetX, playerHand.targetY - 16, `+${formatScore(pts)} б.${streakSuffix}`, '#fde047', 1.25);
                         }
                         startNextProblemCycle();
                     }
@@ -1892,16 +2060,14 @@
             }
 
             const handColor = playerHand.isWrong ? '#ef4444' : '#22d3ee';
-            const angle = Math.atan2(playerHand.currentY - playerHand.startY, playerHand.currentX - playerHand.startX);
-            const isGripping = playerHand.state === 'retracting' && !playerHand.isWrong;
-            const spread = isGripping ? 0.25 : 0.72;
+            const angle = Math.atan2(playerHand.targetY - playerHand.startY, playerHand.targetX - playerHand.startX);
 
             ctx.save();
             ctx.strokeStyle = handColor;
             ctx.lineWidth = 6;
             ctx.lineCap = 'round';
             ctx.shadowColor = handColor;
-            ctx.shadowBlur = 18;
+            ctx.shadowBlur = 16;
 
             ctx.beginPath();
             ctx.moveTo(playerHand.startX, playerHand.startY);
@@ -1911,27 +2077,29 @@
             ctx.translate(playerHand.currentX, playerHand.currentY);
             ctx.rotate(angle);
 
-            const coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 14);
-            coreGrad.addColorStop(0, '#ffffff');
-            coreGrad.addColorStop(0.5, handColor);
-            coreGrad.addColorStop(1, playerHand.isWrong ? '#991b1b' : '#0891b2');
-
+            ctx.fillStyle = playerHand.isWrong ? '#7f1d1d' : '#083344';
             ctx.beginPath();
-            ctx.arc(0, 0, 13, 0, Math.PI * 2);
-            ctx.fillStyle = coreGrad;
+            ctx.arc(0, 0, 15, 0, Math.PI * 2);
             ctx.fill();
             ctx.lineWidth = 2.5;
             ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            [-1, 1].forEach((dir) => {
-                ctx.beginPath();
-                ctx.arc(0, 0, 19, dir * spread, dir * (spread + 0.58), dir < 0);
-                ctx.lineWidth = 4;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = isGripping ? '#facc15' : '#ffffff';
-                ctx.stroke();
-            });
+            const clawSpread = playerHand.state === 'extending' ? 0.52 : 0.24;
+            ctx.strokeStyle = handColor;
+            ctx.lineWidth = 3.5;
+
+            ctx.beginPath();
+            ctx.moveTo(6, -6);
+            ctx.lineTo(18, -14 * clawSpread * 2.2);
+            ctx.lineTo(24, -5);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(6, 6);
+            ctx.lineTo(18, 14 * clawSpread * 2.2);
+            ctx.lineTo(24, 5);
+            ctx.stroke();
 
             ctx.restore();
         }
@@ -1956,34 +2124,50 @@
             }
         }
 
-        function updateAndDrawPopups(dt) {
-            for (let i = gameState.popups.length - 1; i >= 0; i--) {
-                const pop = gameState.popups[i];
-                pop.y += pop.vy * dt;
-                pop.vy *= Math.pow(0.25, dt);
-                pop.alpha -= 0.95 * dt;
-                if (pop.alpha <= 0) {
-                    gameState.popups.splice(i, 1);
+        function updateAndDrawShockwaves(dt) {
+            for (let i = gameState.shockwaves.length - 1; i >= 0; i--) {
+                const sw = gameState.shockwaves[i];
+                sw.radius += 420 * dt;
+                sw.alpha -= 1.45 * dt;
+                if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+                    gameState.shockwaves.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, sw.alpha);
+                ctx.strokeStyle = sw.color;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = sw.color;
+                ctx.shadowBlur = 14;
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function updateAndDrawFloatingTexts(dt) {
+            for (let i = gameState.floatingTexts.length - 1; i >= 0; i--) {
+                const ft = gameState.floatingTexts[i];
+                ft.y += ft.vy * dt;
+                ft.vy *= 0.96;
+                ft.life -= dt;
+                ft.alpha = Math.max(0, Math.min(1, ft.life * 1.4));
+
+                if (ft.life <= 0) {
+                    gameState.floatingTexts.splice(i, 1);
                     continue;
                 }
 
                 ctx.save();
-                ctx.globalAlpha = Math.max(0, pop.alpha);
+                ctx.globalAlpha = ft.alpha;
+                ctx.font = `900 ${Math.round(20 * ft.scale)}px Inter, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-
-                let offsetY = 0;
-                for (const line of pop.lines) {
-                    ctx.font = `900 ${line.size}px Inter, sans-serif`;
-                    ctx.shadowColor = 'rgba(9, 13, 22, 0.95)';
-                    ctx.shadowBlur = 10;
-                    ctx.lineWidth = 4;
-                    ctx.strokeStyle = 'rgba(9, 13, 22, 0.9)';
-                    ctx.strokeText(line.text, pop.x, pop.y + offsetY);
-                    ctx.fillStyle = line.color;
-                    ctx.fillText(line.text, pop.x, pop.y + offsetY);
-                    offsetY += line.size + 4;
-                }
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+                ctx.shadowBlur = 8;
+                ctx.fillStyle = ft.color;
+                ctx.fillText(ft.text, ft.x, ft.y);
                 ctx.restore();
             }
         }
@@ -1998,8 +2182,7 @@
 
             const w = arenaWidth;
             const h = arenaHeight;
-            drawCosmicGrid(w, h);
-            drawArenaAtmosphere(w, h, now, dt);
+            drawCosmicGrid(w, h, dt);
             drawArenaBases(w, h);
 
             if (gameState.phase === 'countdown') {
@@ -2020,29 +2203,28 @@
                     gameState.playerCooldown = Math.max(0, gameState.playerCooldown - dt);
                 }
 
-                if (gameState.mode === 'training') {
-                    gameState.elapsedTime += dt;
-                    updateTimerHUD();
-                } else {
-                    gameState.elapsedTime += dt;
-                    gameState.roundTimeLeft -= dt;
-                    updateTimerHUD();
-                    if (gameState.roundTimeLeft <= 0) {
-                        gameState.roundTimeLeft = 0;
-                        updateTimerHUD(true);
-                        endMatch();
-                        return;
-                    }
+                gameState.roundTimeLeft -= dt;
+                updateTimerHUD();
+                if (gameState.roundTimeLeft <= 0) {
+                    gameState.roundTimeLeft = 0;
+                    updateTimerHUD(true);
+                    endMatch();
+                    return;
+                }
+
+                if (gameState.mode !== 'training') {
                     updateBotDecisions(dt);
                 }
 
+                updateAndDrawShockwaves(dt);
                 updateAndDrawBalls(w, h, dt);
                 updateAndDrawBotClaws(dt);
                 updateAndDrawPlayerHand(dt);
             }
 
             updateAndDrawParticles(dt);
-            updateAndDrawPopups(dt);
+            updateAndDrawFloatingTexts(dt);
+            drawScreenVignettes(w, h, dt);
 
             animationFrameId = requestAnimationFrame(gameLoop);
         }
@@ -2113,6 +2295,51 @@
         document.addEventListener('DOMContentLoaded', () => {
             syncViewportLayout();
 
+            // Avatar selection on Welcome Screen
+            const avatarButtons = document.querySelectorAll('.btn-avatar');
+            const avatarPreview = document.getElementById('welcome-avatar-preview');
+            const setupAvatarBadge = document.getElementById('setup-avatar-badge');
+
+            avatarButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    soundEngine.init();
+                    soundEngine.tick();
+                    playerAvatar = btn.dataset.avatar;
+
+                    avatarButtons.forEach(b => {
+                        b.classList.remove('bg-cyan-950/60', 'border-cyan-400', 'ring-2', 'ring-cyan-400/40');
+                        b.classList.add('bg-slate-900/80', 'border-slate-700');
+                    });
+
+                    btn.classList.remove('bg-slate-900/80', 'border-slate-700');
+                    btn.classList.add('bg-cyan-950/60', 'border-cyan-400', 'ring-2', 'ring-cyan-400/40');
+
+                    if (avatarPreview) {
+                        avatarPreview.textContent = playerAvatar;
+                        avatarPreview.classList.add('scale-110');
+                        setTimeout(() => avatarPreview.classList.remove('scale-110'), 160);
+                    }
+                    if (setupAvatarBadge) {
+                        setupAvatarBadge.textContent = playerAvatar;
+                    }
+                });
+            });
+
+            document.getElementById('btn-welcome-play').addEventListener('click', () => {
+                soundEngine.init();
+                soundEngine.tick();
+                screenWelcome.classList.add('hidden');
+                screenStart.classList.remove('hidden');
+                syncViewportLayout();
+            });
+
+            document.getElementById('btn-back-welcome').addEventListener('click', () => {
+                soundEngine.tick();
+                screenStart.classList.add('hidden');
+                screenWelcome.classList.remove('hidden');
+                syncViewportLayout();
+            });
+
             document.querySelectorAll('.mode-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     soundEngine.init();
@@ -2121,46 +2348,11 @@
                 });
             });
 
-            const opButtons = document.querySelectorAll('.btn-op');
-            opButtons.forEach(btn => {
+            document.querySelectorAll('.btn-op').forEach(btn => {
                 btn.addEventListener('click', () => {
                     soundEngine.init();
                     soundEngine.tick();
-                    selectedOperation = btn.dataset.op;
-
-                    opButtons.forEach(b => {
-                        b.classList.remove(
-                            'border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40',
-                            'border-pink-400', 'bg-pink-950/40', 'ring-pink-400/40',
-                            'border-purple-400', 'bg-purple-950/40', 'ring-purple-400/40',
-                            'border-amber-400', 'bg-amber-950/40', 'ring-amber-400/40'
-                        );
-                        b.classList.add('border-slate-700');
-                        const labelEl = b.querySelector('span:last-child');
-                        if (labelEl) {
-                            labelEl.classList.remove('text-white');
-                            labelEl.classList.add('text-slate-200');
-                        }
-                    });
-
-                    btn.classList.remove('border-slate-700');
-                    const activeLabel = btn.querySelector('span:last-child');
-                    if (activeLabel) {
-                        activeLabel.classList.remove('text-slate-200');
-                        activeLabel.classList.add('text-white');
-                    }
-
-                    if (selectedOperation === 'add') {
-                        btn.classList.add('border-cyan-400', 'bg-cyan-950/40', 'ring-2', 'ring-cyan-400/40');
-                    } else if (selectedOperation === 'sub') {
-                        btn.classList.add('border-pink-400', 'bg-pink-950/40', 'ring-2', 'ring-pink-400/40');
-                    } else if (selectedOperation === 'mul') {
-                        btn.classList.add('border-purple-400', 'bg-purple-950/40', 'ring-2', 'ring-purple-400/40');
-                    } else {
-                        btn.classList.add('border-amber-400', 'bg-amber-950/40', 'ring-2', 'ring-amber-400/40');
-                    }
-
-                    updateDifficultyDescriptions();
+                    applyOperationUI(btn.dataset.op);
                 });
             });
 
@@ -2234,7 +2426,8 @@
                 exitToMenu();
             });
 
-            updateDifficultyDescriptions();
+            applyOperationUI('add');
+            applyModeUI('training');
         });
     </script>
 </body>
